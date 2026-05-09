@@ -69,7 +69,6 @@ export default function AuditFormPage() {
 
   // ---- Tool management ----
   const addTool = useCallback(() => {
-    // Find a tool not already added
     const usedIds = new Set(form.tools.map((t) => t.toolId));
     const available = ALL_TOOLS.find((t) => !usedIds.has(t.id));
     if (!available) return;
@@ -149,11 +148,8 @@ export default function AuditFormPage() {
     };
 
     const result = runAudit(input);
-
-    // Store result in sessionStorage for the results page
     sessionStorage.setItem("burnlens-audit-result", JSON.stringify(result));
     sessionStorage.setItem("burnlens-audit-input", JSON.stringify(input));
-
     router.push("/audit/results");
   };
 
@@ -169,18 +165,18 @@ export default function AuditFormPage() {
   }
 
   return (
-    <div className="audit-page bg-grid">
+    <div className="audit-page">
       {/* Navbar */}
       <nav className="audit-nav">
         <div className="container audit-nav-inner">
           <Link href="/" className="audit-nav-brand" aria-label="Back to home">
             <ArrowLeft size={18} />
-            <Zap size={20} style={{ color: "var(--brand-primary-light)" }} />
+            <Zap size={20} color="#0FF395" />
             <span className="audit-nav-text">
-              Burn<span className="gradient-text">Lens</span>
+              Burn<span style={{ color: "#0AD87D" }}>Lens</span>
             </span>
           </Link>
-          <div className="audit-nav-badge badge">
+          <div className="badge" style={{ fontSize: "0.75rem", gap: "0.25rem" }}>
             <Save size={12} />
             Auto-saved
           </div>
@@ -203,7 +199,7 @@ export default function AuditFormPage() {
         <div className="audit-team-row glass-card">
           <div className="audit-field">
             <label className="input-label" htmlFor="team-size">
-              <Users size={14} style={{ display: "inline", marginRight: 4 }} />
+              <Users size={14} />
               Team Size
             </label>
             <input
@@ -286,7 +282,9 @@ export default function AuditFormPage() {
                       <div
                         className="audit-tool-dot"
                         style={{ background: tool.color }}
-                      />
+                      >
+                        {tool.name.charAt(0)}
+                      </div>
                       <select
                         className="input-field audit-tool-select"
                         value={entry.toolId}
@@ -435,6 +433,7 @@ export default function AuditFormPage() {
         .audit-page {
           min-height: 100vh;
           padding-bottom: 8rem;
+          background: var(--bg-primary);
         }
         .audit-loading {
           min-height: 100vh;
@@ -445,8 +444,8 @@ export default function AuditFormPage() {
         .loading-spinner {
           width: 40px;
           height: 40px;
-          border: 3px solid var(--border-secondary);
-          border-top-color: var(--brand-primary);
+          border: 3px solid var(--border-card);
+          border-top-color: var(--credex-green-dark);
           border-radius: 50%;
           animation: spin 0.8s linear infinite;
         }
@@ -460,9 +459,9 @@ export default function AuditFormPage() {
           top: 0;
           z-index: 50;
           padding: 1rem 0;
-          background: rgba(10, 10, 15, 0.85);
+          background: rgba(244, 247, 250, 0.9);
           backdrop-filter: blur(20px);
-          border-bottom: 1px solid var(--border-primary);
+          border-bottom: 1px solid var(--border-card);
         }
         .audit-nav-inner {
           display: flex;
@@ -484,10 +483,6 @@ export default function AuditFormPage() {
         }
         .audit-nav-text {
           color: var(--text-primary);
-        }
-        .audit-nav-badge {
-          font-size: 0.75rem;
-          padding: 0.25rem 0.625rem;
         }
 
         /* Header */
@@ -565,10 +560,16 @@ export default function AuditFormPage() {
           margin-bottom: 1rem;
         }
         .audit-tool-dot {
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
+          width: 32px;
+          height: 32px;
+          border-radius: var(--radius-sm);
           flex-shrink: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: 700;
+          font-size: 0.8rem;
         }
         .audit-tool-select {
           flex: 1;
@@ -585,7 +586,7 @@ export default function AuditFormPage() {
         }
         .audit-tool-remove:hover {
           color: #ef4444;
-          background: rgba(239, 68, 68, 0.1);
+          background: rgba(239, 68, 68, 0.08);
         }
         .audit-tool-fields {
           display: flex;
@@ -610,9 +611,9 @@ export default function AuditFormPage() {
           left: 0;
           right: 0;
           padding: 1rem var(--container-padding);
-          background: rgba(10, 10, 15, 0.9);
+          background: rgba(244, 247, 250, 0.92);
           backdrop-filter: blur(20px);
-          border-top: 1px solid var(--border-primary);
+          border-top: 1px solid var(--border-card);
           z-index: 50;
         }
         .audit-summary-bar {
