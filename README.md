@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BurnLens — AI Spend Audit
 
-## Getting Started
+> **Stop overspending on AI tools.** BurnLens is a free audit tool that helps startups and engineering teams find savings across Cursor, Copilot, Claude, ChatGPT, Gemini, and more — in under 2 minutes.
 
-First, run the development server:
+Built for [Credex](https://credex.rocks) — the marketplace for AI & cloud infrastructure credits.
+
+## 🔗 Live Demo
+
+**[→ Try BurnLens](https://credex.vercel.app)** *(deployed on Vercel)*
+
+## Screenshots
+
+> *Coming Day 4 — screenshots of the full audit flow*
+
+## Quick Start
 
 ```bash
+# Clone
+git clone https://github.com/omnipotentchaos/Credex.git
+cd Credex
+
+# Install
+npm install
+
+# Set up environment
+cp .env.example .env.local
+# Fill in your Supabase, Cerebras, and Resend keys
+
+# Run locally
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Layer | Choice |
+|-------|--------|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| Database | Supabase (Postgres) |
+| AI Summary | Cerebras API |
+| Email | Resend |
+| Deployment | Vercel |
+| Testing | Vitest |
 
-## Learn More
+## Decisions
 
-To learn more about Next.js, take a look at the following resources:
+> *To be completed Day 4 — 5 trade-offs with reasoning*
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **TBD**
+2. **TBD**
+3. **TBD**
+4. **TBD**
+5. **TBD**
