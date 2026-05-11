@@ -72,3 +72,44 @@
 - Integrate Cerebras API for personalized audit summary
 - Add lead capture form (email + company)
 - Polish landing page with final copy
+
+---
+
+## Day 2 — 2025-05-11
+
+**Hours worked:** 3
+
+**What I did:**
+- Wrote 13 unit tests for the audit engine covering all 6 rules + edge cases:
+  - Savings tier classification (4 tests)
+  - Empty input, plan-fit, overpay, seat right-sizing, cross-tool, Credex credits
+  - Optimal scenario, annual calculation, multi-tool aggregation
+- Set up Vitest with jsdom environment and `@/` path alias
+- Created GitHub Actions CI workflow (lint → test → typecheck → build)
+- Built Cerebras API integration (`src/lib/cerebras.ts`):
+  - OpenAI-compatible chat completions at `api.cerebras.ai/v1`
+  - LLaMA 4 Scout 17B model
+  - Robust template fallback when API key missing or call fails
+- Built API routes:
+  - `POST /api/audit/summary` — AI summary generation
+  - `POST /api/leads` — Lead capture with honeypot spam protection
+  - Supabase integration when configured, console log fallback for dev
+- Added AI Summary card to results page with loading state and source badge
+- Added lead capture form to results page (email + company + honeypot)
+- Documented all tests in `TESTS.md` (13 tests, how to run, CI integration)
+- Documented all prompts in `PROMPTS.md` (system prompt, reasoning, iteration history, fallback strategy)
+
+**What I learned:**
+- Cerebras uses the exact OpenAI API format — just change the base URL
+- Honeypot fields are a simple, effective anti-spam technique that doesn't annoy real users
+- Vitest with jsdom is extremely fast — 13 tests in 11ms
+
+**Blockers / what I'm stuck on:**
+- Need to set up actual Supabase tables and test the full lead → email flow
+- User interviews still pending
+
+**Plan for tomorrow:**
+- Write GTM.md and ECONOMICS.md (entrepreneurial docs)
+- Write REFLECTION.md
+- Add number animations and polish to results page
+- Finalize ARCHITECTURE.md with Mermaid diagram

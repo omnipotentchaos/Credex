@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -11,8 +11,10 @@ import {
   ChevronDown,
   ChevronUp,
   CheckCircle2,
-  DollarSign,
   Repeat2,
+  Mail,
+  Loader2,
+  MessageSquare,
   Sparkles,
   Share2,
   Copy,
@@ -187,18 +189,76 @@ export default function AuditResultsPage() {
   const [result, setResult] = useState<AuditResult | null>(null);
   const [copied, setCopied] = useState(false);
 
+  // AI Summary state
+  const [summary, setSummary] = useState<string | null>(null);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [summarySource, setSummarySource] = useState<"ai" | "template" | null>(null);
+
+  // Lead capture state
+  const [leadEmail, setLeadEmail] = useState("");
+  const [leadCompany, setLeadCompany] = useState("");
+  const [leadHoneypot, setLeadHoneypot] = useState("");
+  const [leadSubmitted, setLeadSubmitted] = useState(false);
+  const [leadLoading, setLeadLoading] = useState(false);
+
   useEffect(() => {
     try {
       const stored = sessionStorage.getItem("burnlens-audit-result");
       if (stored) {
-        setResult(JSON.parse(stored) as AuditResult);
+        const parsed = JSON.parse(stored) as AuditResult;
+        setResult(parsed);
+        // Fetch AI summary
+        fetchSummary(parsed);
       } else {
         router.replace("/audit");
       }
     } catch {
       router.replace("/audit");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
+
+  const fetchSummary = async (auditResult: AuditResult) => {
+    setSummaryLoading(true);
+    try {
+      const res = await fetch("/api/audit/summary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ result: auditResult }),
+      });
+      const data = await res.json();
+      setSummary(data.summary || null);
+      setSummarySource(data.source || "template");
+    } catch {
+      setSummary(null);
+    } finally {
+      setSummaryLoading(false);
+    }
+  };
+
+  const handleLeadSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!leadEmail || leadLoading) return;
+    setLeadLoading(true);
+    try {
+      await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: leadEmail,
+          company: leadCompany || undefined,
+          auditSavings: result?.totalMonthlySavings,
+          savingsTier: result?.savingsTier,
+          honeypot: leadHoneypot,
+        }),
+      });
+      setLeadSubmitted(true);
+    } catch {
+      // Silent failure
+    } finally {
+      setLeadLoading(false);
+    }
+  };
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -275,6 +335,85 @@ export default function AuditResultsPage() {
           ))}
         </div>
 
+        {/* AI Summary */}
+        <div className="summary-card glass-card">
+          <div className="summary-header">
+            <MessageSquare size={20} color="#0AD87D" />
+            <h3 className="summary-title">AI Audit Summary</h3>
+            {summarySource && (
+              <span className="badge" style={{ fontSize: "0.7rem" }}>
+                {summarySource === "ai" ? "Cerebras AI" : "Auto-generated"}
+              </span>
+            )}
+          </div>
+          {summaryLoading ? (
+            <div className="summary-loading">
+              <Loader2 size={20} className="spin" />
+              <span>Generating personalized summary...</span>
+            </div>
+          ) : summary ? (
+            <p className="summary-text">{summary}</p>
+          ) : (
+            <p className="summary-text" style={{ color: "var(--text-tertiary)" }}>
+              Summary unavailable. Check your Cerebras API key.
+            </p>
+          )}
+        </div>
+
+        {/* Lead Capture */}
+        {!leadSubmitted ? (
+          <div className="lead-card glass-card">
+            <div className="lead-header">
+              <Mail size={20} color="#0AD87D" />
+              <div>
+                <h3 className="lead-title">Get your full report by email</h3>
+                <p className="lead-subtitle">We&apos;ll send a detailed breakdown + savings tips.</p>
+              </div>
+            </div>
+            <form className="lead-form" onSubmit={handleLeadSubmit}>
+              {/* Honeypot — hidden from real users */}
+              <input
+                type="text"
+                name="website"
+                value={leadHoneypot}
+                onChange={(e) => setLeadHoneypot(e.target.value)}
+                style={{ position: "absolute", left: "-9999px", opacity: 0 }}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+              <div className="lead-fields">
+                <input
+                  type="email"
+                  className="input-field"
+                  placeholder="your@email.com"
+                  value={leadEmail}
+                  onChange={(e) => setLeadEmail(e.target.value)}
+                  required
+                />
+                <input
+                  type="text"
+                  className="input-field"
+                  placeholder="Company (optional)"
+                  value={leadCompany}
+                  onChange={(e) => setLeadCompany(e.target.value)}
+                />
+                <button type="submit" className="btn-primary" disabled={leadLoading}>
+                  {leadLoading ? <Loader2 size={16} className="spin" /> : <Mail size={16} />}
+                  Send Report
+                </button>
+              </div>
+            </form>
+          </div>
+        ) : (
+          <div className="lead-card glass-card lead-success">
+            <CheckCircle2 size={24} color="#0AD87D" />
+            <div>
+              <h3 className="lead-title">Report sent!</h3>
+              <p className="lead-subtitle">Check your inbox for a detailed breakdown of your audit.</p>
+            </div>
+          </div>
+        )}
+
         {/* Credex CTA */}
         <div className="credex-cta teal-card">
           <div className="credex-cta-content">
@@ -333,6 +472,26 @@ export default function AuditResultsPage() {
 
         .results-cards { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
 
+        /* Summary */
+        .summary-card { padding: 1.5rem; margin-bottom: 1.5rem; }
+        .summary-header { display: flex; align-items: center; gap: 0.625rem; margin-bottom: 1rem; }
+        .summary-title { font-size: 1rem; font-weight: 700; margin: 0; }
+        .summary-loading { display: flex; align-items: center; gap: 0.75rem; color: var(--text-tertiary); font-size: 0.9rem; }
+        .summary-text { font-size: 0.9rem; line-height: 1.7; color: var(--text-secondary); }
+        .spin { animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Lead capture */
+        .lead-card { padding: 1.5rem; margin-bottom: 1.5rem; }
+        .lead-header { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1rem; }
+        .lead-title { font-size: 1rem; font-weight: 700; margin: 0; }
+        .lead-subtitle { font-size: 0.85rem; color: var(--text-tertiary); margin: 0.125rem 0 0; }
+        .lead-form { position: relative; }
+        .lead-fields { display: flex; gap: 0.75rem; align-items: stretch; }
+        .lead-fields .input-field { flex: 1; }
+        .lead-fields .btn-primary { white-space: nowrap; padding: 0.75rem 1.5rem; font-size: 0.9rem; }
+        .lead-success { display: flex; align-items: center; gap: 0.75rem; }
+
         .credex-cta {
           padding: 2rem; display: flex; align-items: center; justify-content: space-between;
           gap: 2rem; margin-bottom: 2rem;
@@ -348,6 +507,7 @@ export default function AuditResultsPage() {
           .results-stats-row { grid-template-columns: 1fr; }
           .credex-cta { flex-direction: column; text-align: center; }
           .credex-cta-content { flex-direction: column; align-items: center; }
+          .lead-fields { flex-direction: column; }
         }
       `}</style>
     </div>
