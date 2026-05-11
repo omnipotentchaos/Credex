@@ -3,7 +3,7 @@
 // ============================================================
 
 import { describe, it, expect } from "vitest";
-import { runAudit, getSavingsTier, type AuditInput, type AuditResult } from "@/lib/audit-engine";
+import { runAudit, getSavingsTier, type AuditInput } from "@/lib/audit-engine";
 
 // ============================================================
 // Test 1: Savings tier classification

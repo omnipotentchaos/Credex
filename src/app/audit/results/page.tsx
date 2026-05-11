@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -17,7 +17,6 @@ import {
   MessageSquare,
   Sparkles,
   Share2,
-  Copy,
   Check,
   ArrowRight,
 } from "lucide-react";
@@ -186,7 +185,16 @@ function RecommendationRow({ rec }: { rec: Recommendation }) {
 // ============================================================
 export default function AuditResultsPage() {
   const router = useRouter();
-  const [result, setResult] = useState<AuditResult | null>(null);
+  const [result] = useState<AuditResult | null>(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      const stored = sessionStorage.getItem("burnlens-audit-result");
+      if (stored) return JSON.parse(stored) as AuditResult;
+    } catch {
+      // Ignore
+    }
+    return null;
+  });
   const [copied, setCopied] = useState(false);
 
   // AI Summary state
@@ -201,40 +209,35 @@ export default function AuditResultsPage() {
   const [leadSubmitted, setLeadSubmitted] = useState(false);
   const [leadLoading, setLeadLoading] = useState(false);
 
-  useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem("burnlens-audit-result");
-      if (stored) {
-        const parsed = JSON.parse(stored) as AuditResult;
-        setResult(parsed);
-        // Fetch AI summary
-        fetchSummary(parsed);
-      } else {
-        router.replace("/audit");
-      }
-    } catch {
-      router.replace("/audit");
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router]);
+  const fetchedRef = useRef(false);
 
-  const fetchSummary = async (auditResult: AuditResult) => {
-    setSummaryLoading(true);
-    try {
-      const res = await fetch("/api/audit/summary", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ result: auditResult }),
-      });
-      const data = await res.json();
-      setSummary(data.summary || null);
-      setSummarySource(data.source || "template");
-    } catch {
-      setSummary(null);
-    } finally {
-      setSummaryLoading(false);
+  // Redirect if no result; fetch summary on mount
+  useEffect(() => {
+    if (!result) {
+      router.replace("/audit");
+      return;
     }
-  };
+    if (fetchedRef.current) return;
+    fetchedRef.current = true;
+
+    (async () => {
+      setSummaryLoading(true);
+      try {
+        const res = await fetch("/api/audit/summary", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ result }),
+        });
+        const data = await res.json();
+        setSummary(data.summary || null);
+        setSummarySource(data.source || "template");
+      } catch {
+        setSummary(null);
+      } finally {
+        setSummaryLoading(false);
+      }
+    })();
+  }, [result, router]);
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

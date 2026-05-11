@@ -9,7 +9,6 @@ import {
   type ToolInfo,
   type PlanInfo,
   TOOLS_MAP,
-  ALL_TOOLS,
 } from "./pricing-data";
 
 // ============================================================
@@ -158,8 +157,7 @@ function checkCheaperPlan(
   tool: ToolInfo,
   plan: PlanInfo,
   seats: number,
-  useCase: UseCase,
-  monthlySpend: number
+  useCase: UseCase
 ): Recommendation | null {
   if (plan.isApi || plan.pricePerSeat <= 0) return null;
 
@@ -317,8 +315,7 @@ function checkSeatRightSizing(
   tool: ToolInfo,
   plan: PlanInfo,
   seats: number,
-  teamSize: number,
-  monthlySpend: number
+  teamSize: number
 ): Recommendation | null {
   if (plan.isApi || plan.pricePerSeat <= 0) return null;
 
@@ -365,8 +362,7 @@ export function runAudit(input: AuditInput): AuditResult {
       tool,
       plan,
       entry.seats,
-      input.useCase,
-      entry.monthlySpend
+      input.useCase
     );
     if (cheaperPlan) recommendations.push(cheaperPlan);
 
@@ -377,8 +373,7 @@ export function runAudit(input: AuditInput): AuditResult {
       tool,
       plan,
       entry.seats,
-      input.teamSize,
-      entry.monthlySpend
+      input.teamSize
     );
     if (seatRightSize) recommendations.push(seatRightSize);
 

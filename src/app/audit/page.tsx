@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -43,29 +43,26 @@ const DEFAULT_FORM: FormState = {
 // ============================================================
 export default function AuditFormPage() {
   const router = useRouter();
-  const [form, setForm] = useState<FormState>(DEFAULT_FORM);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  // Load from localStorage on mount
-  useEffect(() => {
+  const [form, setForm] = useState<FormState>(() => {
+    if (typeof window === "undefined") return DEFAULT_FORM;
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved) as FormState;
-        setForm(parsed);
-      }
+      if (saved) return JSON.parse(saved) as FormState;
     } catch {
       // Ignore parse errors
     }
-    setIsLoaded(true);
-  }, []);
+    return DEFAULT_FORM;
+  });
+  const isFirstRender = useRef(true);
 
-  // Persist to localStorage on change
+  // Persist to localStorage on change (skip first render)
   useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
     }
-  }, [form, isLoaded]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
+  }, [form]);
 
   // ---- Tool management ----
   const addTool = useCallback(() => {
@@ -155,14 +152,6 @@ export default function AuditFormPage() {
 
   const usedToolIds = new Set(form.tools.map((t) => t.toolId));
   const canAddMore = usedToolIds.size < ALL_TOOLS.length;
-
-  if (!isLoaded) {
-    return (
-      <div className="audit-loading">
-        <div className="loading-spinner" />
-      </div>
-    );
-  }
 
   return (
     <div className="audit-page">
