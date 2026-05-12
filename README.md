@@ -10,7 +10,7 @@ Built for [Credex](https://credex.rocks) — the marketplace for AI & cloud infr
 
 ## Screenshots
 
-> *Coming Day 4 — screenshots of the full audit flow*
+> *Coming Day 5 — screenshots of the full audit flow*
 
 ## Quick Start
 
@@ -28,6 +28,12 @@ cp .env.example .env.local
 
 # Run locally
 npm run dev
+
+# Run tests
+npm test
+
+# Lint
+npm run lint
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
@@ -37,20 +43,52 @@ Open [http://localhost:3000](http://localhost:3000).
 | Layer | Choice |
 |-------|--------|
 | Framework | Next.js 16 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS |
+| Language | TypeScript (strict, no `any`) |
+| Styling | Tailwind CSS v4 + CSS custom properties |
 | Database | Supabase (Postgres) |
-| AI Summary | Cerebras API |
+| AI Summary | Cerebras API (LLaMA 4 Scout 17B) |
 | Email | Resend |
+| Testing | Vitest (13 tests, <15ms) |
+| CI | GitHub Actions (lint → test → typecheck → build) |
 | Deployment | Vercel |
-| Testing | Vitest |
 
-## Decisions
+## 5 Trade-Off Decisions
 
-> *To be completed Day 4 — 5 trade-offs with reasoning*
+### 1. Client-Side Audit Engine vs. Server-Side API
+**Chose:** Client-side (runs in browser)
+**Why:** Zero latency, zero marginal cost, offline-capable. The audit engine is a pure function — no API secrets, no database reads. Trade-off: pricing data is bundled in the client (~8KB), but it changes quarterly so staleness isn't a concern.
 
-1. **TBD**
-2. **TBD**
-3. **TBD**
-4. **TBD**
-5. **TBD**
+### 2. Browser Storage vs. Database for Audit Flow
+**Chose:** `localStorage` (form) + `sessionStorage` (results)
+**Why:** No signup friction — the entire audit flow works without any account creation or server interaction. Trade-off: results aren't yet shareable via URL. Supabase persistence with `share_id` is planned for Week 2.
+
+### 3. Template Fallback vs. AI-Only Summary
+**Chose:** AI summary with deterministic template fallback
+**Why:** The product should never break if the Cerebras API is down. The template uses the same audit data to produce a reasonable summary. A `source` badge ("Cerebras AI" vs "Auto-generated") maintains transparency. Trade-off: template summaries are less personalized.
+
+### 4. Cerebras (LLaMA 4 Scout) vs. Claude/GPT for Summaries
+**Chose:** Cerebras
+**Why:** Ultra-fast inference (~200ms), free tier available, OpenAI-compatible API format. For ~120-word summaries, the quality difference vs. Claude Sonnet is negligible. Trade-off: smaller model may hallucinate slightly more on edge cases, but we constrain output with specific prompts and length limits.
+
+### 5. Light-Mode Credex Brand vs. Custom Dark Theme
+**Chose:** Credex brand alignment (light mode, teal + green)
+**Why:** BurnLens is a Credex product — visual consistency builds trust and makes the Credex CTA feel native rather than an ad. Trade-off: developer audiences generally prefer dark mode, but brand consistency wins for a B2B tool.
+
+## Documentation
+
+| File | Description |
+|------|-------------|
+| [ARCHITECTURE.md](ARCHITECTURE.md) | System diagram, data flow, stack justification, scaling plan |
+| [DEVLOG.md](DEVLOG.md) | Daily development log with hours, learnings, blockers |
+| [PRICING_DATA.md](PRICING_DATA.md) | Verified pricing for all 8 AI tools with source URLs |
+| [TESTS.md](TESTS.md) | All 13 tests documented with how to run |
+| [PROMPTS.md](PROMPTS.md) | AI prompt engineering docs with iteration history |
+| [GTM.md](GTM.md) | Go-to-market strategy with 5 specific channels |
+| [ECONOMICS.md](ECONOMICS.md) | Unit economics with CAC/LTV math |
+| [METRICS.md](METRICS.md) | North Star + 3 input metrics + pivot trigger |
+| [LANDING_COPY.md](LANDING_COPY.md) | Full landing page copy with FAQs |
+| [REFLECTION.md](REFLECTION.md) | 5 reflection questions with honest self-assessment |
+
+## License
+
+MIT
