@@ -1,44 +1,6 @@
 # DEVLOG — CredexAudit
 
-## Day 1 — 2026-05-07
-
-**Hours worked:** 0
-
-**What I did:**
-- Reviewed the assignment requirements and rubric.
-- Set up my local development environment.
-- Reached out to potential users for interviews to get a head start.
-
-**What I learned:**
-- The entrepreneurial constraints are heavily weighted (25%). This is not just a coding task.
-
-**Blockers / what I am stuck on:**
-- Waiting for responses from potential users.
-
-**Plan for tomorrow:**
-- Continue waiting for user interview responses and plan the architecture.
-
----
-
-## Day 2 — 2026-05-08
-
-**Hours worked:** 0
-
-**What I did:**
-- Busy with college coursework. Did not write code today.
-
-**What I learned:**
-- N/A
-
-**Blockers / what I am stuck on:**
-- Time constraints due to college.
-
-**Plan for tomorrow:**
-- Kick off the project, initialize Next.js, and build the landing page.
-
----
-
-## Day 3 — 2026-05-09
+## Day 1 — 2026-05-09
 
 **Hours worked:** 2
 
@@ -48,7 +10,7 @@
 - Built the landing page with hero section, 3-step "How it works", feature grid, tool showcase, and CTA
 - Created project structure with all placeholder markdown files
 - Set up GitHub repo and deployed initial commit
-- Researched the Credex assignment requirements and created a 4-day execution plan
+- Researched the Credex assignment requirements and created an execution plan
 
 **What I learned:**
 - Next.js 16 ships with Tailwind v4 out of the box now, which uses `@import "tailwindcss"` instead of the old `@tailwind` directives
@@ -65,7 +27,7 @@
 
 ---
 
-## Day 4 — 2026-05-10
+## Day 2 — 2026-05-10
 
 **Hours worked:** 3
 
@@ -94,7 +56,7 @@
 
 ---
 
-## Day 5 — 2026-05-11
+## Day 3 — 2026-05-11
 
 **Hours worked:** 3
 
@@ -122,7 +84,7 @@
 
 ---
 
-## Day 6 — 2026-05-12
+## Day 4 — 2026-05-12
 
 **Hours worked:** 3
 
@@ -150,7 +112,7 @@
 
 ---
 
-## Day 7 — 2026-05-13
+## Day 5 — 2026-05-13
 
 **Hours worked:** 4
 
