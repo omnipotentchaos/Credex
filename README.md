@@ -6,7 +6,7 @@ Built for [Credex](https://credex.rocks) — the marketplace for AI & cloud infr
 
 ## 🔗 Live Demo
 
-**[→ Try CredexAudit](https://credex.vercel.app)** *(deployed on Vercel)*
+**[→ Try CredexAudit](https://credex-seven-kappa.vercel.app/)** *(deployed on Vercel)*
 
 ## Screenshots
 
