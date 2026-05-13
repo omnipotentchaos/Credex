@@ -22,7 +22,7 @@ export function CredexCta({ monthlySavings, savingsTier, className = "" }: Crede
           <div>
             <h3 className="text-xl font-extrabold text-white mb-2">You have material savings on the table</h3>
             <p className="text-sm text-primary-foreground/70 max-w-[520px] leading-relaxed">
-              At about \${monthlySavings.toLocaleString()}/mo in identified savings, Credex can help you buy the same AI plans through verified credit transfers — often{" "}
+              At about ${monthlySavings.toLocaleString()}/mo in identified savings, Credex can help you buy the same AI plans through verified credit transfers — often{" "}
               <strong className="text-white">10–30% below retail</strong>.
             </p>
           </div>
