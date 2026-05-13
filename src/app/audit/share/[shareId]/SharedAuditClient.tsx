@@ -162,7 +162,7 @@ export default function SharedAuditClient({ shareId, result, aiSummary, createdA
         <div className="container mx-auto flex items-center justify-between px-6 max-w-4xl">
           <Link href="/" className="flex items-center gap-2 font-bold text-[1.1rem] text-foreground no-underline">
             <Zap size={20} color="#0FF395" />
-            <span>Burn<span className="text-[#0AD87D]">Lens</span></span>
+            <span>Credex<span className="text-[#0AD87D]">Audit</span></span>
           </Link>
           <div className="flex gap-2">
             <Button 

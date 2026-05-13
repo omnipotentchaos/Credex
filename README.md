@@ -10,7 +10,9 @@ Built for [Credex](https://credex.rocks) — the marketplace for AI & cloud infr
 
 ## Screenshots
 
-Add three images before submission: landing, spend form, results (or a short Loom). Store them under `docs/screenshots/` and link them here so reviewers can skim the flow without running the app.
+![Landing Page](/docs/screenshots/landing.png)
+![Audit Form](/docs/screenshots/form.png)
+![Audit Results](/docs/screenshots/results.png)
 
 ## Quick Start
 

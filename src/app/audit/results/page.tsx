@@ -304,7 +304,7 @@ export default function AuditResultsPage() {
           <Link href="/audit" className="flex items-center gap-2 font-bold text-[1.1rem] text-foreground no-underline">
             <ArrowLeft size={18} />
             <Zap size={20} color="#0FF395" />
-            <span>Burn<span className="text-[#0AD87D]">Lens</span></span>
+            <span>Credex<span className="text-[#0AD87D]">Audit</span></span>
           </Link>
           <div className="flex gap-3">
             <Button 

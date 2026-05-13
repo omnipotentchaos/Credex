@@ -180,7 +180,7 @@ export default function AuditFormPage() {
             <ArrowLeft size={18} />
             <Zap size={20} color="#0FF395" />
             <span className="text-foreground">
-              Burn<span className="text-[#0AD87D]">Lens</span>
+              Credex<span className="text-[#0AD87D]">Audit</span>
             </span>
           </Link>
           <Badge variant="outline" className="gap-1.5 text-xs text-muted-foreground bg-secondary/50">

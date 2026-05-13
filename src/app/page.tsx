@@ -82,7 +82,7 @@ export default function HomePage() {
 
           <div className="flex justify-center gap-4">
             <Button asChild size="lg" className="rounded-full px-10 py-6 text-base font-semibold">
-              <Link href="/audit">Start buying credits</Link>
+              <Link href="/audit">Start Audit</Link>
             </Button>
           </div>
         </div>
