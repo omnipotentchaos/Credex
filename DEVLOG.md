@@ -1,6 +1,61 @@
 # DEVLOG — CredexAudit
 
-## Day 1 — 2026-05-09
+## Day 1 — 2026-05-06
+
+**Hours worked:** 0
+
+**What I did:**
+- Received the assignment today. Read through the requirements.
+- Could not start writing code because I was extremely busy with college practicals.
+
+**What I learned:**
+- N/A
+
+**Blockers / what I'm stuck on:**
+- College practical exams taking up all my time.
+
+**Plan for tomorrow:**
+- Try to finish college work so I can start on this project.
+
+---
+
+## Day 2 — 2026-05-07
+
+**Hours worked:** 0
+
+**What I did:**
+- Still busy with college practicals. No code written.
+
+**What I learned:**
+- N/A
+
+**Blockers / what I'm stuck on:**
+- College practicals.
+
+**Plan for tomorrow:**
+- Finish the last of the practicals.
+
+---
+
+## Day 3 — 2026-05-08
+
+**Hours worked:** 0
+
+**What I did:**
+- Last day of college practicals. Did some mental planning for the architecture but didn't write code.
+
+**What I learned:**
+- N/A
+
+**Blockers / what I'm stuck on:**
+- Exhaustion from practicals.
+
+**Plan for tomorrow:**
+- Finally start coding and set up the Next.js foundation.
+
+---
+
+## Day 4 — 2026-05-09
 
 **Hours worked:** 2
 
@@ -27,7 +82,7 @@
 
 ---
 
-## Day 2 — 2026-05-10
+## Day 5 — 2026-05-10
 
 **Hours worked:** 3
 
@@ -56,7 +111,7 @@
 
 ---
 
-## Day 3 — 2026-05-11
+## Day 6 — 2026-05-11
 
 **Hours worked:** 3
 
@@ -84,7 +139,7 @@
 
 ---
 
-## Day 4 — 2026-05-12
+## Day 7 — 2026-05-12
 
 **Hours worked:** 3
 
@@ -112,7 +167,7 @@
 
 ---
 
-## Day 5 — 2026-05-13
+## Day 8 — 2026-05-13
 
 **Hours worked:** 4
 
