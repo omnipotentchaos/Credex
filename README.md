@@ -1,16 +1,16 @@
-# BurnLens — AI Spend Audit
+# CredexAudit — AI Spend Audit
 
-> **Stop overspending on AI tools.** BurnLens is a free audit tool that helps startups and engineering teams find savings across Cursor, Copilot, Claude, ChatGPT, Gemini, and more — in under 2 minutes.
+> **Stop overspending on AI tools.** CredexAudit is a free audit tool that helps startups and engineering teams find savings across Cursor, Copilot, Claude, ChatGPT, Gemini, and more — in under 2 minutes.
 
 Built for [Credex](https://credex.rocks) — the marketplace for AI & cloud infrastructure credits.
 
 ## 🔗 Live Demo
 
-**[→ Try BurnLens](https://credex.vercel.app)** *(deployed on Vercel)*
+**[→ Try CredexAudit](https://credex.vercel.app)** *(deployed on Vercel)*
 
 ## Screenshots
 
-> *Coming Day 5 — screenshots of the full audit flow*
+Add three images before submission: landing, spend form, results (or a short Loom). Store them under `docs/screenshots/` and link them here so reviewers can skim the flow without running the app.
 
 ## Quick Start
 
@@ -46,7 +46,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | Language | TypeScript (strict, no `any`) |
 | Styling | Tailwind CSS v4 + CSS custom properties |
 | Database | Supabase (Postgres) |
-| AI Summary | Cerebras API (LLaMA 4 Scout 17B) |
+| AI Summary | Cerebras API (Llama 3.1 8B) |
 | Email | Resend |
 | Testing | Vitest (13 tests, <15ms) |
 | CI | GitHub Actions (lint → test → typecheck → build) |
@@ -59,20 +59,20 @@ Open [http://localhost:3000](http://localhost:3000).
 **Why:** Zero latency, zero marginal cost, offline-capable. The audit engine is a pure function — no API secrets, no database reads. Trade-off: pricing data is bundled in the client (~8KB), but it changes quarterly so staleness isn't a concern.
 
 ### 2. Browser Storage vs. Database for Audit Flow
-**Chose:** `localStorage` (form) + `sessionStorage` (results)
-**Why:** No signup friction — the entire audit flow works without any account creation or server interaction. Trade-off: results aren't yet shareable via URL. Supabase persistence with `share_id` is planned for Week 2.
+**Chose:** `localStorage` (form) + `sessionStorage` (results), then **Supabase** after results load
+**Why:** The audit stays instant and anonymous until the user sees value; `POST /api/audit/save` then stores `input_data`, `result_data`, and a short `share_id` so `/audit/share/[shareId]` and OG tags work. Trade-off: if save fails, share links still work only from the current session until the user retries.
 
 ### 3. Template Fallback vs. AI-Only Summary
 **Chose:** AI summary with deterministic template fallback
 **Why:** The product should never break if the Cerebras API is down. The template uses the same audit data to produce a reasonable summary. A `source` badge ("Cerebras AI" vs "Auto-generated") maintains transparency. Trade-off: template summaries are less personalized.
 
-### 4. Cerebras (LLaMA 4 Scout) vs. Claude/GPT for Summaries
+### 4. Cerebras (Llama 3.1 8B) vs. Claude/GPT for Summaries
 **Chose:** Cerebras
-**Why:** Ultra-fast inference (~200ms), free tier available, OpenAI-compatible API format. For ~120-word summaries, the quality difference vs. Claude Sonnet is negligible. Trade-off: smaller model may hallucinate slightly more on edge cases, but we constrain output with specific prompts and length limits.
+**Why:** Ultra-fast inference (~2200 tokens/s), free tier available, OpenAI-compatible API format. For ~120-word summaries, the quality difference vs. Claude Sonnet is negligible. Trade-off: smaller 8B model may hallucinate slightly more on edge cases, but we constrain output with specific prompts and length limits.
 
 ### 5. Light-Mode Credex Brand vs. Custom Dark Theme
 **Chose:** Credex brand alignment (light mode, teal + green)
-**Why:** BurnLens is a Credex product — visual consistency builds trust and makes the Credex CTA feel native rather than an ad. Trade-off: developer audiences generally prefer dark mode, but brand consistency wins for a B2B tool.
+**Why:** CredexAudit is a Credex product — visual consistency builds trust and makes the Credex CTA feel native rather than an ad. Trade-off: developer audiences generally prefer dark mode, but brand consistency wins for a B2B tool.
 
 ## Documentation
 
@@ -88,6 +88,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | [METRICS.md](METRICS.md) | North Star + 3 input metrics + pivot trigger |
 | [LANDING_COPY.md](LANDING_COPY.md) | Full landing page copy with FAQs |
 | [REFLECTION.md](REFLECTION.md) | 5 reflection questions with honest self-assessment |
+| [USER_INTERVIEWS.md](USER_INTERVIEWS.md) | Three real user interviews (required for submission) |
 
 ## License
 

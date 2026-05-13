@@ -1,10 +1,13 @@
 // ============================================================
 // POST /api/leads
 // Stores lead data + sends audit report email via Resend
+// Rate limited (Upstash) + honeypot
 // ============================================================
 
 import { NextRequest, NextResponse } from "next/server";
+import { validate as uuidValidate } from "uuid";
 import { getSupabase } from "@/lib/supabase";
+import { getLeadsRateLimiter, rateLimitOr429 } from "@/lib/rate-limit";
 
 interface LeadData {
   email: string;
@@ -14,19 +17,29 @@ interface LeadData {
   auditSavings?: number;
   savingsTier?: string;
   shareId?: string;
+  auditId?: string;
   honeypot?: string;
 }
 
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 export async function POST(request: NextRequest) {
+  const limited = await rateLimitOr429(
+    request,
+    getLeadsRateLimiter(),
+    "leads-post"
+  );
+  if (limited) return limited;
+
   try {
     const body = (await request.json()) as LeadData;
 
-    // Honeypot check — if filled, it's a bot
     if (body.honeypot) {
       return NextResponse.json({ success: true });
     }
 
-    // Validate email
     if (!body.email || !isValidEmail(body.email)) {
       return NextResponse.json(
         { error: "Valid email is required" },
@@ -34,40 +47,58 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Try Supabase
     const supabase = getSupabase();
+    let leadId: string | null = null;
+
     if (supabase) {
-      const { error } = await supabase.from("leads").insert({
+      const row: Record<string, unknown> = {
         email: body.email,
         company: body.company || null,
         role: body.role || null,
-        team_size: body.teamSize || null,
-        audit_savings: body.auditSavings || null,
+        team_size:
+          typeof body.teamSize === "number" && Number.isFinite(body.teamSize)
+            ? Math.min(100000, Math.max(0, Math.floor(body.teamSize)))
+            : null,
+        audit_savings: body.auditSavings ?? null,
         savings_tier: body.savingsTier || null,
-      });
+      };
+
+      if (body.auditId && uuidValidate(body.auditId)) {
+        row.audit_id = body.auditId;
+      }
+
+      const { data: inserted, error } = await supabase
+        .from("leads")
+        .insert(row)
+        .select("id")
+        .single();
 
       if (error) {
         console.error("Supabase lead insert error:", error);
+      } else if (inserted?.id) {
+        leadId = inserted.id as string;
       }
     }
 
-    // Try Resend email
     const resendKey = process.env.RESEND_API_KEY;
     if (resendKey && resendKey !== "your_resend_api_key") {
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://credex.vercel.app";
-        const shareLink = body.shareId ? `${baseUrl}/audit/share/${body.shareId}` : baseUrl;
+        const baseUrl =
+          process.env.NEXT_PUBLIC_BASE_URL || "https://credex.vercel.app";
+        const shareLink = body.shareId
+          ? `${baseUrl}/audit/share/${body.shareId}`
+          : baseUrl;
 
-        await fetch("https://api.resend.com/emails", {
+        const res = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${resendKey}`,
           },
           body: JSON.stringify({
-            from: "BurnLens <onboarding@resend.dev>",
+            from: "CredexAudit <onboarding@resend.dev>",
             to: [body.email],
-            subject: `Your BurnLens AI Spend Audit — $${body.auditSavings || 0}/mo in savings found`,
+            subject: `Your CredexAudit AI Spend Audit — $${body.auditSavings || 0}/mo in savings found`,
             html: buildEmailHtml({
               savings: body.auditSavings || 0,
               tier: body.savingsTier || "optimal",
@@ -76,24 +107,27 @@ export async function POST(request: NextRequest) {
           }),
         });
 
-        // Update email_sent flag
-        if (supabase) {
-          await supabase
+        if (!res.ok) {
+          const errData = await res.json();
+          console.error("Resend API rejected the request:", errData);
+        } else if (supabase && leadId) {
+          const { error: upErr } = await supabase
             .from("leads")
             .update({ email_sent: true })
-            .eq("email", body.email)
-            .order("created_at", { ascending: false })
-            .limit(1);
+            .eq("id", leadId);
+          if (upErr) console.error("Supabase email_sent update error:", upErr);
         }
       } catch (emailError) {
         console.error("Resend email error:", emailError);
       }
     }
 
-    // Fallback log
     console.log("📧 Lead captured:", {
       email: body.email,
       company: body.company,
+      role: body.role,
+      teamSize: body.teamSize,
+      auditId: body.auditId,
       savings: body.auditSavings,
       timestamp: new Date().toISOString(),
     });
@@ -108,19 +142,24 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function buildEmailHtml({ savings, tier, shareLink }: { savings: number; tier: string; shareLink: string }) {
-  const tierMessage = tier === "optimal"
-    ? "Your AI tool spend looks well-optimized!"
-    : `We found <strong>$${savings}/mo</strong> in potential savings.`;
+function buildEmailHtml({
+  savings,
+  tier,
+  shareLink,
+}: {
+  savings: number;
+  tier: string;
+  shareLink: string;
+}) {
+  const tierMessage =
+    tier === "optimal"
+      ? "Your AI tool spend looks well-optimized!"
+      : `We found <strong>$${savings}/mo</strong> in potential savings.`;
 
   return `
     <div style="font-family: 'Inter', -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 2rem;">
       <div style="text-align: center; margin-bottom: 2rem;">
-        <h1 style="font-size: 1.5rem; color: #112F34;">⚡ Your BurnLens Audit Report</h1>
+        <h1 style="font-size: 1.5rem; color: #112F34;">⚡ Your CredexAudit Audit Report</h1>
       </div>
       
       <div style="background: #112F34; border-radius: 16px; padding: 2rem; text-align: center; margin-bottom: 1.5rem;">
@@ -142,7 +181,7 @@ function buildEmailHtml({ savings, tier, shareLink }: { savings: number; tier: s
       <hr style="border: none; border-top: 1px solid #E1E8ED; margin: 2rem 0;" />
 
       <p style="color: #8a9ab5; font-size: 0.8rem; text-align: center;">
-        BurnLens by <a href="https://credex.rocks" style="color: #0AD87D;">Credex</a> — the marketplace for AI & cloud credits.
+        CredexAudit by <a href="https://credex.rocks" style="color: #0AD87D;">Credex</a> — the marketplace for AI & cloud credits.
       </p>
     </div>
   `;

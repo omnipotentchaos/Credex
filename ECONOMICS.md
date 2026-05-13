@@ -1,16 +1,16 @@
-# Unit Economics — BurnLens
+# Unit Economics — CredexAudit
 
-> Cost analysis and revenue model for BurnLens as a Credex growth tool
+> Cost analysis and revenue model for CredexAudit as a Credex growth tool
 
 ## Cost Structure (Monthly)
 
-BurnLens is designed to run near-zero marginal cost per audit:
+CredexAudit is designed to run near-zero marginal cost per audit:
 
 | Item | Cost | Notes |
 |------|------|-------|
 | **Vercel hosting** | $0 | Free tier: 100GB bandwidth, 100k edge invocations |
 | **Supabase** | $0 | Free tier: 500MB database, 50k auth users |
-| **Cerebras API** | ~$0.50/1k audits | LLaMA 4 Scout: ~150 tokens/summary at $0.10/M input + $0.30/M output |
+| **Cerebras API** | ~$0.50/1k audits (order-of-magnitude) | Llama 3.1 8B: short summaries (~150 tokens); check [Cerebras pricing](https://inference-docs.cerebras.ai/) for current rates |
 | **Resend email** | $0 | Free tier: 100 emails/day (3k/mo) |
 | **Domain** | ~$12/year | Optional — currently on Vercel subdomain |
 
@@ -20,7 +20,7 @@ The key economic insight: AI summary costs are negligible because we use Cerebra
 
 ## Revenue Model
 
-BurnLens is a **lead generation tool**, not a revenue product. It monetizes through Credex marketplace conversions:
+CredexAudit is a **lead generation tool**, not a revenue product. It monetizes through Credex marketplace conversions:
 
 ### Credex Revenue Per Lead
 
@@ -56,7 +56,7 @@ This is an extreme ratio because the tool is free and distribution is organic. E
 
 ## Break-Even Analysis
 
-BurnLens breaks even at **1 Credex conversion per month** (~$40/mo revenue vs ~$1.50/mo cost). Every conversion above that is pure margin for Credex's marketplace business.
+CredexAudit breaks even at **1 Credex conversion per month** (~$40/mo revenue vs ~$1.50/mo cost). Every conversion above that is pure margin for Credex's marketplace business.
 
 ## Scaling Economics
 

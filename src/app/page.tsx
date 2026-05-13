@@ -4,12 +4,13 @@ import Link from "next/link";
 import {
   ArrowRight,
   Zap,
-  TrendingDown,
   Shield,
-  BarChart3,
   CheckCircle2,
-  Sparkles,
 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 
 const TRUST_ITEMS = [
   "24×7 support",
@@ -35,582 +36,256 @@ const TOOLS = [
 
 export default function HomePage() {
   return (
-    <div className="landing">
+    <div className="min-h-screen bg-background">
       {/* ====== NAVBAR ====== */}
-      <nav className="nav-wrapper">
-        <div className="nav-bar">
-          <Link href="/" className="nav-brand">
+      <div className="sticky top-0 z-50 pt-3 px-6">
+        <nav className="mx-auto flex max-w-5xl items-center justify-between rounded-full border bg-white/85 px-5 py-2.5 backdrop-blur-md">
+          <Link href="/" className="flex items-center gap-2 no-underline">
             <Zap size={22} color="#0FF395" />
-            <span className="nav-brand-text">
-              Burn<span style={{ color: "#0AD87D" }}>Lens</span>
+            <span className="text-lg font-extrabold tracking-tight text-foreground">
+              Credex<span className="text-[#0AD87D]">Audit</span>
             </span>
           </Link>
 
-          <div className="nav-center">
-            <span className="badge-green badge" style={{ fontSize: "0.75rem" }}>
+          <div className="hidden md:block absolute left-1/2 -translate-x-1/2">
+            <Badge variant="secondary" className="bg-[#0FF395]/15 text-[#112F34] border-[#0FF395]/20 font-medium">
               BY CREDEX
-            </span>
+            </Badge>
           </div>
 
-          <div className="nav-right">
-            <Link href="/audit" className="btn-primary" style={{ padding: "0.625rem 1.5rem", fontSize: "0.9rem" }}>
-              Start Audit
-            </Link>
+          <div className="flex items-center gap-3">
+            <Button asChild className="rounded-full px-6">
+              <Link href="/audit">Start Audit</Link>
+            </Button>
           </div>
-        </div>
-      </nav>
+        </nav>
+      </div>
 
       {/* ====== HERO ====== */}
-      <section className="hero-section">
-        <div className="container hero-content">
-          {/* Floating tool icons */}
-          <div className="hero-tools">
-            {TOOLS.slice(0, 4).map((t) => (
-              <div key={t.name} className="hero-tool-icon" style={{ background: t.color }}>
-                {t.name.charAt(0)}
-              </div>
-            ))}
-          </div>
+      <section className="relative overflow-hidden py-24 text-center">
+        <div className="relative z-10 mx-auto max-w-4xl px-6">
+          <Badge variant="outline" className="mb-6 gap-2 py-1 text-sm bg-white">
+            <Badge variant="secondary" className="bg-[#0FF395]/15 text-[#112F34] border-[#0FF395]/20">NO OVERSPEND</Badge>
+            AI spend audit in 60 seconds
+          </Badge>
 
-          <div className="hero-pill badge">
-            <span className="badge-green badge" style={{ padding: "0.2rem 0.5rem", fontSize: "0.7rem" }}>
-              NO OVERSPEND
-            </span>
-            <span>AI spend audit in 60 seconds</span>
-          </div>
-
-          <h1 className="hero-title">
-            <span className="gradient-text">Save Up To 40%</span>
+          <h1 className="mb-6 text-5xl font-bold tracking-tight md:text-7xl">
+            <span className="text-[#0AD87D]">Save Up To 40%</span>
             <br />
             On AI Tool Subscriptions
           </h1>
 
-          <p className="hero-subtitle">
+          <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground leading-relaxed">
             Free audit for your Cursor, Copilot, Claude, ChatGPT, and Gemini spend.
             Find savings and unlock discounted credits through Credex.
           </p>
 
-          <div className="hero-actions">
-            <Link href="/audit" className="btn-primary hero-cta">
-              Start buying credits
-            </Link>
+          <div className="flex justify-center gap-4">
+            <Button asChild size="lg" className="rounded-full px-10 py-6 text-base font-semibold">
+              <Link href="/audit">Start buying credits</Link>
+            </Button>
           </div>
         </div>
       </section>
 
       {/* ====== TRUST MARQUEE ====== */}
-      <div className="marquee-container">
-        <div className="marquee-track">
-          {[...TRUST_ITEMS, ...TRUST_ITEMS].map((item, i) => (
-            <span key={i} className="marquee-item">
-              <span className="marquee-dot" />
+      <div className="overflow-hidden border-y border-border bg-secondary py-3">
+        <div className="inline-flex gap-10 whitespace-nowrap animate-[marquee_30s_linear_infinite]">
+          {[...TRUST_ITEMS, ...TRUST_ITEMS, ...TRUST_ITEMS].map((item, i) => (
+            <span key={i} className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <span className="h-2 w-2 rounded-full bg-[#0FF395]" />
               {item}
             </span>
           ))}
         </div>
       </div>
 
-      {/* ====== STATS + INTRO (Credex teal section) ====== */}
-      <section className="section">
-        <div className="container stats-grid">
-          <div className="teal-card stats-intro">
-            <span className="section-label" style={{ color: "#0FF395" }}>
+      {/* ====== STATS ====== */}
+      <section className="py-20">
+        <div className="mx-auto max-w-6xl px-6 grid gap-5 md:grid-cols-2">
+          <Card className="flex flex-col justify-center border-white/10 bg-primary p-10 text-primary-foreground rounded-3xl">
+            <span className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#0FF395]">
               TAP IN
             </span>
-            <h2 style={{ color: "white", fontSize: "clamp(1.5rem, 3vw, 2rem)" }}>
+            <h2 className="text-3xl font-bold text-white md:text-4xl">
               Stop overpaying for AI tools you already use
             </h2>
-            <p style={{ color: "var(--text-on-dark-secondary)", marginTop: "1rem", lineHeight: 1.7 }}>
+            <p className="mt-4 text-primary-foreground/70 leading-relaxed">
               We analyze your current plans across 8 tools, flag waste, and recommend the optimal configuration — same features, lower cost.
             </p>
-          </div>
+          </Card>
 
-          <div className="stats-numbers">
-            <div className="teal-card stat-card">
-              <div className="stat-value">$2.4K</div>
-              <div className="stat-label">Avg. Annual Savings</div>
-            </div>
-            <div className="teal-card stat-card">
-              <div className="stat-value">8+</div>
-              <div className="stat-label">Tools Audited</div>
-            </div>
-            <div className="teal-card stat-card">
-              <div className="stat-value">60s</div>
-              <div className="stat-label">Time to Audit</div>
-            </div>
-            <div className="teal-card stat-card">
-              <div className="stat-value">6</div>
-              <div className="stat-label">Audit Rules</div>
-            </div>
+          <div className="grid grid-cols-2 gap-5">
+            {[
+              { value: "$2.4K", label: "Avg. Annual Savings" },
+              { value: "8+", label: "Tools Audited" },
+              { value: "60s", label: "Time to Audit" },
+              { value: "6", label: "Audit Rules" },
+            ].map((stat, i) => (
+              <Card key={i} className="flex flex-col items-center justify-center border-white/10 bg-primary p-8 text-center text-primary-foreground rounded-3xl">
+                <div className="text-3xl font-extrabold tracking-tight md:text-4xl">{stat.value}</div>
+                <div className="mt-1 text-sm text-primary-foreground/70">{stat.label}</div>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
       {/* ====== HOW IT WORKS ====== */}
-      <section className="section" style={{ background: "var(--bg-secondary)" }}>
-        <div className="container">
-          <span className="section-label">HOW IT WORKS</span>
-          <h2 className="section-title">Three steps to lower your AI bill</h2>
+      <section className="py-20 bg-secondary">
+        <div className="mx-auto max-w-6xl px-6">
+          <span className="mb-3 block text-xs font-semibold uppercase tracking-widest text-muted-foreground">HOW IT WORKS</span>
+          <h2 className="mb-8 text-3xl font-bold md:text-4xl">Three steps to lower your AI bill</h2>
 
-          <div className="steps-grid">
+          <div className="grid gap-5 md:grid-cols-3">
             {[
               {
                 num: "01",
                 title: "Add Your Tools",
                 desc: "Tell us which AI tools you use — Cursor, Copilot, Claude, ChatGPT, Gemini, Windsurf — and your current plans and seats.",
-                icon: <BarChart3 size={24} />,
               },
               {
                 num: "02",
                 title: "Get Your Audit",
                 desc: "Our engine runs 6 rule-based checks: plan-fit, overpay detection, seat right-sizing, cross-tool alternatives, and Credex credit savings.",
-                icon: <TrendingDown size={24} />,
               },
               {
                 num: "03",
                 title: "Save Money",
                 desc: "Act on clear recommendations with dollar amounts. Or save even more with discounted Credex credits — same plans, 10-30% off.",
-                icon: <Sparkles size={24} />,
               },
             ].map((step) => (
-              <div key={step.num} className="step-card glass-card">
-                <div className="step-num">{step.num}</div>
-                <h3 className="step-title">{step.title}</h3>
-                <p className="step-desc">{step.desc}</p>
-              </div>
+              <Card key={step.num} className="p-8 rounded-3xl">
+                <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                  {step.num}
+                </div>
+                <h3 className="mb-2 text-xl font-bold">{step.title}</h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">{step.desc}</p>
+              </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ====== TOOLS GRID (like Credex credit plans) ====== */}
-      <section className="section">
-        <div className="container">
-          <div className="tools-header">
+      {/* ====== TOOLS GRID ====== */}
+      <section className="py-20">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
             <div>
-              <span className="section-label">SUPPORTED TOOLS</span>
-              <h2 className="section-title">Explore audit coverage</h2>
+              <span className="mb-3 block text-xs font-semibold uppercase tracking-widest text-muted-foreground">SUPPORTED TOOLS</span>
+              <h2 className="text-3xl font-bold md:text-4xl">Explore audit coverage</h2>
             </div>
-            <Link href="/audit" className="btn-primary" style={{ padding: "0.625rem 1.5rem", fontSize: "0.9rem" }}>
-              Start Audit
-            </Link>
+            <Button asChild className="rounded-full px-6">
+              <Link href="/audit">Start Audit</Link>
+            </Button>
           </div>
 
-          <div className="tools-grid">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {TOOLS.map((tool) => (
-              <div key={tool.name} className="tool-card glass-card">
-                <div className="tool-card-icon" style={{ background: tool.color }}>
+              <Card key={tool.name} className="p-6 rounded-3xl">
+                <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-md font-bold text-white" style={{ background: tool.color }}>
                   {tool.name.charAt(0)}
                 </div>
-                <div className="tool-card-rows">
-                  <div className="tool-card-row">
-                    <span className="tool-card-label">Product</span>
-                    <span className="tool-card-value">{tool.name}</span>
+                <div className="flex flex-col gap-2.5">
+                  <div className="flex items-center justify-between border-b pb-2 text-sm">
+                    <span className="text-muted-foreground">Product</span>
+                    <span className="font-semibold">{tool.name}</span>
                   </div>
-                  <div className="tool-card-row">
-                    <span className="tool-card-label">Category</span>
-                    <span className="tool-card-value">
+                  <div className="flex items-center justify-between border-b pb-2 text-sm">
+                    <span className="text-muted-foreground">Category</span>
+                    <span className="font-semibold">
                       {tool.name.includes("API") ? "API" : tool.name.includes("Cursor") || tool.name.includes("Copilot") || tool.name.includes("Windsurf") ? "IDE" : "Chat"}
                     </span>
                   </div>
-                  <div className="tool-card-row">
-                    <span className="tool-card-label">Audit Rules</span>
-                    <span className="tool-card-value">6 checks</span>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Audit Rules</span>
+                    <span className="font-semibold">6 checks</span>
                   </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ====== SAFETY & GUARANTEE ====== */}
-      <section className="section" style={{ background: "var(--bg-secondary)" }}>
-        <div className="container guarantee-grid">
+      {/* ====== GUARANTEE ====== */}
+      <section className="py-20 bg-secondary">
+        <div className="mx-auto max-w-6xl px-6 grid gap-12 md:grid-cols-2 md:items-start">
           <div>
-            <span className="section-label">METHODOLOGY</span>
-            <h2 className="section-title">Transparent, rule-based auditing</h2>
-            <p className="section-subtitle" style={{ marginBottom: "2rem" }}>
+            <span className="mb-3 block text-xs font-semibold uppercase tracking-widest text-muted-foreground">METHODOLOGY</span>
+            <h2 className="mb-4 text-3xl font-bold md:text-4xl">Transparent, rule-based auditing</h2>
+            <p className="mb-8 text-lg text-muted-foreground leading-relaxed">
               Every recommendation comes with clear reasoning, dollar savings, and source data. No black boxes.
             </p>
 
-            <div className="guarantee-list">
+            <div className="flex flex-col gap-4">
               {[
                 "All pricing verified from official vendor pages",
                 "6 independent audit checks per tool",
                 "Recommendations include trade-off explanations",
                 "Credex credit savings clearly labeled as marketplace offers",
               ].map((item) => (
-                <div key={item} className="guarantee-item">
-                  <CheckCircle2 size={18} color="#0AD87D" />
+                <div key={item} className="flex items-center gap-3 border-b pb-4 text-sm font-medium last:border-0">
+                  <CheckCircle2 size={18} className="text-[#0AD87D]" />
                   <span>{item}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="teal-card guarantee-cta-card">
-            <Shield size={32} color="#0FF395" />
-            <h3 style={{ color: "white", marginTop: "1rem" }}>Powered by Credex</h3>
-            <p style={{ color: "var(--text-on-dark-secondary)", margin: "0.5rem 0 1.5rem", fontSize: "0.9rem", lineHeight: 1.6 }}>
-              BurnLens is built by Credex — the marketplace for discounted AI & cloud credits. Save on the same tools with verified sellers.
+          <Card className="border-white/10 bg-primary p-10 text-primary-foreground rounded-3xl">
+            <Shield size={32} className="text-[#0FF395]" />
+            <h3 className="mt-4 text-xl font-bold text-white">Powered by Credex</h3>
+            <p className="my-4 text-sm leading-relaxed text-primary-foreground/70">
+              CredexAudit is built by Credex — the marketplace for discounted AI & cloud credits. Save on the same tools with verified sellers.
             </p>
-            <a href="https://credex.rocks" target="_blank" rel="noopener noreferrer" className="btn-green">
-              Visit Credex
-              <ArrowRight size={16} />
-            </a>
-          </div>
+            <Button asChild variant="secondary" className="rounded-full bg-[#0FF395] text-[#112F34] hover:bg-[#0AD87D]">
+              <a href="https://credex.rocks" target="_blank" rel="noopener noreferrer">
+                Visit Credex
+                <ArrowRight size={16} className="ml-2" />
+              </a>
+            </Button>
+          </Card>
         </div>
       </section>
 
       {/* ====== FINAL CTA ====== */}
-      <section className="section final-cta-section">
-        <div className="container" style={{ textAlign: "center" }}>
-          <h2 style={{ marginBottom: "1rem" }}>
-            Ready to audit your AI spend?
-          </h2>
-          <p className="section-subtitle" style={{ margin: "0 auto 2rem", textAlign: "center" }}>
+      <section className="border-t py-20 text-center">
+        <div className="mx-auto max-w-3xl px-6">
+          <h2 className="mb-4 text-3xl font-bold md:text-4xl">Ready to audit your AI spend?</h2>
+          <p className="mb-8 text-lg text-muted-foreground leading-relaxed">
             Free. Instant. No sign-up required. See exactly where your money goes.
           </p>
-          <Link href="/audit" className="btn-primary hero-cta">
-            Start Your Free Audit
-            <ArrowRight size={18} />
-          </Link>
+          <Button asChild size="lg" className="rounded-full px-8 font-semibold">
+            <Link href="/audit">
+              Start Your Free Audit
+              <ArrowRight size={18} className="ml-2" />
+            </Link>
+          </Button>
         </div>
       </section>
 
       {/* ====== FOOTER ====== */}
-      <footer className="footer">
-        <div className="container footer-inner">
-          <div className="footer-brand">
+      <footer className="border-t py-8">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
+          <div className="flex items-center gap-2">
             <Zap size={18} color="#0FF395" />
-            <span style={{ fontWeight: 700 }}>BurnLens</span>
-            <span style={{ color: "var(--text-tertiary)", fontSize: "0.85rem" }}>
-              by Credex
-            </span>
+            <span className="font-bold">CredexAudit</span>
+            <span className="text-sm text-muted-foreground">by Credex</span>
           </div>
-          <div className="footer-links">
-            <a href="https://credex.rocks" target="_blank" rel="noopener noreferrer">
+          <div className="flex gap-6 text-sm">
+            <a href="https://credex.rocks" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
               Credex
             </a>
-            <Link href="/audit">Audit</Link>
+            <Link href="/audit" className="text-muted-foreground hover:text-foreground">
+              Audit
+            </Link>
           </div>
-          <p className="footer-copy">
+          <p className="text-xs text-muted-foreground">
             © 2026 Credex. All rights reserved.
           </p>
         </div>
       </footer>
-
-      {/* ====== SCOPED STYLES ====== */}
-      <style jsx>{`
-        .landing {
-          min-height: 100vh;
-        }
-
-        /* Nav */
-        .nav-wrapper {
-          position: sticky;
-          top: 0;
-          z-index: 100;
-          padding: 0.75rem 1.5rem 0;
-        }
-        .nav-bar {
-          max-width: calc(var(--container-max) - 4rem);
-          margin: 0 auto;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0.625rem 1.25rem;
-          background: rgba(255, 255, 255, 0.85);
-          backdrop-filter: blur(20px);
-          border: 1px solid var(--border-card);
-          border-radius: var(--radius-full);
-        }
-        .nav-brand {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          text-decoration: none;
-        }
-        .nav-brand-text {
-          font-size: 1.15rem;
-          font-weight: 800;
-          color: var(--text-primary);
-          letter-spacing: -0.02em;
-        }
-        .nav-center {
-          position: absolute;
-          left: 50%;
-          transform: translateX(-50%);
-        }
-        .nav-right {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-        }
-
-        /* Hero */
-        .hero-section {
-          padding: 6rem 0 4rem;
-          text-align: center;
-          position: relative;
-          overflow: hidden;
-        }
-        .hero-content {
-          position: relative;
-          z-index: 2;
-        }
-        .hero-tools {
-          display: flex;
-          justify-content: center;
-          gap: 0.75rem;
-          margin-bottom: 1.5rem;
-        }
-        .hero-tool-icon {
-          width: 48px;
-          height: 48px;
-          border-radius: var(--radius-md);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-weight: 700;
-          font-size: 1.1rem;
-          box-shadow: var(--shadow-md);
-          transform: rotate(-6deg);
-          transition: transform var(--transition-base);
-        }
-        .hero-tool-icon:nth-child(2) { transform: rotate(4deg); }
-        .hero-tool-icon:nth-child(3) { transform: rotate(-3deg); }
-        .hero-tool-icon:nth-child(4) { transform: rotate(7deg); }
-        .hero-pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-          margin-bottom: 1.5rem;
-          font-size: 0.85rem;
-        }
-        .hero-title {
-          font-size: clamp(2.5rem, 5.5vw, 4.5rem);
-          line-height: 1.05;
-          margin-bottom: 1.5rem;
-          letter-spacing: -0.03em;
-        }
-        .hero-subtitle {
-          font-size: 1.1rem;
-          color: var(--text-secondary);
-          max-width: 560px;
-          margin: 0 auto 2.5rem;
-          line-height: 1.65;
-        }
-        .hero-actions {
-          display: flex;
-          justify-content: center;
-          gap: 1rem;
-        }
-        .hero-cta {
-          padding: 1rem 2.5rem;
-          font-size: 1.05rem;
-        }
-
-        /* Stats grid */
-        .stats-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1.25rem;
-        }
-        .stats-intro {
-          padding: 2.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-        }
-        .stats-numbers {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1.25rem;
-        }
-        .stat-card {
-          padding: 2rem;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-        }
-        .stat-value {
-          font-size: clamp(1.75rem, 3vw, 2.25rem);
-          font-weight: 800;
-          letter-spacing: -0.02em;
-        }
-        .stat-label {
-          font-size: 0.85rem;
-          color: var(--text-on-dark-secondary);
-          margin-top: 0.25rem;
-        }
-
-        /* Steps */
-        .steps-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.25rem;
-          margin-top: 2rem;
-        }
-        .step-card {
-          padding: 2rem;
-        }
-        .step-num {
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          background: var(--credex-teal);
-          color: white;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 0.8rem;
-          font-weight: 700;
-          margin-bottom: 1.25rem;
-        }
-        .step-title {
-          font-size: 1.15rem;
-          margin-bottom: 0.5rem;
-        }
-        .step-desc {
-          font-size: 0.9rem;
-          color: var(--text-secondary);
-          line-height: 1.6;
-        }
-
-        /* Tools grid */
-        .tools-header {
-          display: flex;
-          align-items: flex-end;
-          justify-content: space-between;
-          margin-bottom: 2rem;
-        }
-        .tools-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-          gap: 1rem;
-        }
-        .tool-card {
-          padding: 1.5rem;
-        }
-        .tool-card-icon {
-          width: 36px;
-          height: 36px;
-          border-radius: var(--radius-sm);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-weight: 700;
-          font-size: 0.9rem;
-          margin-bottom: 1.25rem;
-        }
-        .tool-card-rows {
-          display: flex;
-          flex-direction: column;
-          gap: 0.625rem;
-        }
-        .tool-card-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding-bottom: 0.5rem;
-          border-bottom: 1px solid var(--border-primary);
-        }
-        .tool-card-row:last-child {
-          border-bottom: none;
-          padding-bottom: 0;
-        }
-        .tool-card-label {
-          font-size: 0.85rem;
-          color: var(--text-tertiary);
-        }
-        .tool-card-value {
-          font-size: 0.9rem;
-          font-weight: 600;
-        }
-
-        /* Guarantee */
-        .guarantee-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 3rem;
-          align-items: start;
-        }
-        .guarantee-list {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-        .guarantee-item {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          font-size: 0.95rem;
-          padding-bottom: 1rem;
-          border-bottom: 1px solid var(--border-primary);
-        }
-        .guarantee-item:last-child {
-          border-bottom: none;
-        }
-        .guarantee-cta-card {
-          padding: 2.5rem;
-        }
-
-        /* Final CTA */
-        .final-cta-section {
-          border-top: 1px solid var(--border-primary);
-        }
-
-        /* Footer */
-        .footer {
-          padding: 2rem 0;
-          border-top: 1px solid var(--border-card);
-        }
-        .footer-inner {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-        .footer-brand {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-        .footer-links {
-          display: flex;
-          gap: 1.5rem;
-        }
-        .footer-links a {
-          color: var(--text-secondary);
-          text-decoration: none;
-          font-size: 0.9rem;
-          transition: color var(--transition-fast);
-        }
-        .footer-links a:hover {
-          color: var(--text-primary);
-        }
-        .footer-copy {
-          font-size: 0.8rem;
-          color: var(--text-tertiary);
-        }
-
-        @media (max-width: 768px) {
-          .nav-center { display: none; }
-          .stats-grid { grid-template-columns: 1fr; }
-          .stats-numbers { grid-template-columns: 1fr 1fr; }
-          .steps-grid { grid-template-columns: 1fr; }
-          .tools-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-          .tools-grid { grid-template-columns: 1fr; }
-          .guarantee-grid { grid-template-columns: 1fr; }
-          .footer-inner { flex-direction: column; gap: 1rem; text-align: center; }
-          .hero-tools { display: none; }
-        }
-      `}</style>
     </div>
   );
 }

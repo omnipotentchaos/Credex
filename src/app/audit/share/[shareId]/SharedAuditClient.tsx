@@ -15,6 +15,10 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import type { AuditResult, ToolAuditResult, Recommendation } from "@/lib/audit-engine";
+import { CredexCta } from "@/components/CredexCta";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 // ============================================================
 // Props
@@ -71,35 +75,20 @@ function RecommendationRow({ rec }: { rec: Recommendation }) {
   const color = typeColors[rec.type] || "#112F34";
 
   return (
-    <div className="rec-row">
-      <div className="rec-icon" style={{ color, background: `${color}10` }}>
+    <div className="flex gap-3.5 p-4 bg-secondary rounded-xl border border-border transition-colors hover:border-muted-foreground/30">
+      <div 
+        className="w-8 h-8 rounded-md flex items-center justify-center shrink-0 mt-0.5" 
+        style={{ color, background: `${color}10` }}
+      >
         <RecIcon type={rec.type} />
       </div>
-      <div className="rec-content">
-        <div className="rec-header">
-          <h4 className="rec-title">{rec.title}</h4>
-          <span className="rec-savings" style={{ color }}>-${rec.monthlySavings}/mo</span>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-baseline justify-between gap-3 mb-1.5">
+          <h4 className="text-sm font-semibold m-0">{rec.title}</h4>
+          <span className="text-[0.85rem] font-bold whitespace-nowrap" style={{ color }}>-${rec.monthlySavings}/mo</span>
         </div>
-        <p className="rec-reason">{rec.reason}</p>
+        <p className="text-xs text-muted-foreground leading-relaxed m-0">{rec.reason}</p>
       </div>
-
-      <style jsx>{`
-        .rec-row {
-          display: flex; gap: 0.875rem; padding: 1rem;
-          background: var(--bg-secondary); border-radius: var(--radius-md);
-          border: 1px solid var(--border-card);
-        }
-        .rec-icon {
-          width: 32px; height: 32px; border-radius: var(--radius-sm);
-          display: flex; align-items: center; justify-content: center;
-          flex-shrink: 0;
-        }
-        .rec-content { flex: 1; min-width: 0; }
-        .rec-header { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.375rem; }
-        .rec-title { font-size: 0.9rem; font-weight: 600; margin: 0; }
-        .rec-savings { font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
-        .rec-reason { font-size: 0.8rem; color: var(--text-tertiary); line-height: 1.5; margin: 0; }
-      `}</style>
     </div>
   );
 }
@@ -109,45 +98,40 @@ function RecommendationRow({ rec }: { rec: Recommendation }) {
 // ============================================================
 function ToolCard({ result }: { result: ToolAuditResult }) {
   return (
-    <div className="tool-card glass-card">
-      <div className="tool-header">
-        <div className="tool-left">
-          <div className="tool-dot" style={{ background: tierColor(result.savingsTier) }} />
+    <Card className="overflow-hidden rounded-2xl p-5">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: tierColor(result.savingsTier) }} />
           <div>
-            <h3 className="tool-name">{result.toolName}</h3>
-            <p className="tool-plan">
+            <h3 className="text-[1.05rem] font-bold m-0">{result.toolName}</h3>
+            <p className="text-xs text-muted-foreground mt-0.5 m-0">
               {result.currentPlan} · {result.currentSeats} seat{result.currentSeats > 1 ? "s" : ""} · ${result.currentMonthlySpend}/mo
             </p>
           </div>
         </div>
         {result.totalMonthlySavings > 0 ? (
-          <span className="tool-badge" style={{ background: `${tierColor(result.savingsTier)}15`, color: tierColor(result.savingsTier) }}>
+          <Badge 
+            variant="outline" 
+            className="text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap border-transparent"
+            style={{ background: `${tierColor(result.savingsTier)}15`, color: tierColor(result.savingsTier) }}
+          >
             Save ${result.totalMonthlySavings}/mo
-          </span>
+          </Badge>
         ) : (
-          <span className="tool-badge" style={{ background: "rgba(10,216,125,0.1)", color: "#0AD87D" }}>✓ Optimized</span>
+          <Badge variant="outline" className="text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap bg-[#0AD87D]/10 text-[#0AD87D] border-transparent">
+            ✓ Optimized
+          </Badge>
         )}
       </div>
 
       {result.recommendations.length > 0 && (
-        <div className="tool-recs">
+        <div className="flex flex-col gap-3 mt-5 pt-5 border-t border-border">
           {result.recommendations.map((rec, i) => (
             <RecommendationRow key={i} rec={rec} />
           ))}
         </div>
       )}
-
-      <style jsx>{`
-        .tool-card { overflow: hidden; padding: 1.25rem 1.5rem; }
-        .tool-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-        .tool-left { display: flex; align-items: center; gap: 0.875rem; }
-        .tool-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-        .tool-name { font-size: 1.05rem; font-weight: 700; margin: 0; }
-        .tool-plan { font-size: 0.8rem; color: var(--text-tertiary); margin: 0.125rem 0 0; }
-        .tool-badge { font-size: 0.8rem; font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 999px; white-space: nowrap; }
-        .tool-recs { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border-primary); }
-      `}</style>
-    </div>
+    </Card>
   );
 }
 
@@ -172,141 +156,108 @@ export default function SharedAuditClient({ shareId, result, aiSummary, createdA
   });
 
   return (
-    <div className="shared-page">
+    <div className="min-h-screen pb-16 bg-background">
       {/* Nav */}
-      <nav className="shared-nav">
-        <div className="container shared-nav-inner">
-          <Link href="/" className="shared-nav-brand">
+      <nav className="sticky top-0 z-50 py-4 bg-background/90 backdrop-blur-xl border-b print:hidden">
+        <div className="container mx-auto flex items-center justify-between px-6 max-w-4xl">
+          <Link href="/" className="flex items-center gap-2 font-bold text-[1.1rem] text-foreground no-underline">
             <Zap size={20} color="#0FF395" />
-            <span>Burn<span style={{ color: "#0AD87D" }}>Lens</span></span>
+            <span>Burn<span className="text-[#0AD87D]">Lens</span></span>
           </Link>
-          <div className="shared-nav-actions">
-            <button className="btn-secondary" onClick={handleCopy} style={{ fontSize: "0.8rem", padding: "0.4rem 0.875rem" }}>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2 rounded-full" 
+              onClick={handleCopy}
+            >
               {copied ? <Check size={14} /> : <Share2 size={14} />}
               {copied ? "Copied!" : "Share"}
-            </button>
-            <Link href="/audit" className="btn-primary" style={{ fontSize: "0.8rem", padding: "0.4rem 0.875rem" }}>
-              Run Your Own Audit
-            </Link>
+            </Button>
+            <Button size="sm" asChild className="rounded-full">
+              <Link href="/audit">Run Your Own Audit</Link>
+            </Button>
           </div>
         </div>
       </nav>
 
-      <main className="container shared-main">
+      <main className="container mx-auto px-6 max-w-4xl pt-8">
         {/* Shared badge */}
-        <div className="shared-badge-row">
-          <span className="badge">Shared Audit · {date}</span>
+        <div className="text-center mb-4">
+          <Badge variant="secondary" className="font-medium text-muted-foreground bg-secondary/80">
+            Shared Audit · {date}
+          </Badge>
         </div>
 
         {/* Hero */}
-        <div className="shared-hero">
-          <h1 className="shared-hero-title">
+        <div className="text-center mb-10">
+          <h1 className="text-[clamp(1.75rem,4vw,2.75rem)] font-extrabold mb-2">
             This team could save{" "}
-            <span className="gradient-text">${result.totalAnnualSavings.toLocaleString()}</span>
-            <span className="shared-period">/year</span>
+            <span className="text-[#0AD87D]">${result.totalAnnualSavings.toLocaleString()}</span>
+            <span className="text-[0.5em] text-muted-foreground font-medium">/year</span>
           </h1>
-          <p className="shared-subtitle">
+          <p className="text-base text-muted-foreground">
             across {result.toolResults.length} tool{result.toolResults.length > 1 ? "s" : ""} · ${result.totalCurrentSpend.toLocaleString()}/mo current spend
           </p>
         </div>
 
         {/* Stats */}
-        <div className="shared-stats">
-          <div className="teal-card shared-stat">
-            <div className="shared-stat-value">${result.totalCurrentSpend.toLocaleString()}</div>
-            <div className="shared-stat-label">Monthly Spend</div>
-          </div>
-          <div className="teal-card shared-stat">
-            <div className="shared-stat-value" style={{ color: "#0FF395" }}>-${result.totalMonthlySavings.toLocaleString()}</div>
-            <div className="shared-stat-label">Monthly Savings</div>
-          </div>
-          <div className="teal-card shared-stat">
-            <div className="shared-stat-value" style={{ color: tierColor(result.savingsTier) }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <Card className="flex flex-col items-center justify-center p-6 text-center bg-primary text-primary-foreground rounded-3xl border-transparent">
+            <div className="text-xl font-extrabold">${result.totalCurrentSpend.toLocaleString()}</div>
+            <div className="text-xs text-primary-foreground/70 mt-1">Monthly Spend</div>
+          </Card>
+          <Card className="flex flex-col items-center justify-center p-6 text-center bg-primary text-primary-foreground rounded-3xl border-transparent">
+            <div className="text-xl font-extrabold text-[#0FF395]">-${result.totalMonthlySavings.toLocaleString()}</div>
+            <div className="text-xs text-primary-foreground/70 mt-1">Monthly Savings</div>
+          </Card>
+          <Card className="flex flex-col items-center justify-center p-6 text-center bg-primary text-primary-foreground rounded-3xl border-transparent">
+            <div className="text-xl font-extrabold" style={{ color: tierColor(result.savingsTier) }}>
               {tierLabel(result.savingsTier)}
             </div>
-            <div className="shared-stat-label">Optimization Score</div>
-          </div>
+            <div className="text-xs text-primary-foreground/70 mt-1">Optimization Score</div>
+          </Card>
         </div>
 
         {/* AI Summary */}
         {aiSummary && (
-          <div className="summary-card glass-card">
-            <div className="summary-header">
-              <MessageSquare size={20} color="#0AD87D" />
-              <h3 className="summary-title">AI Audit Summary</h3>
+          <Card className="p-6 mb-6 rounded-3xl">
+            <div className="flex items-center gap-2.5 mb-4">
+              <MessageSquare size={20} className="text-[#0AD87D]" />
+              <h3 className="text-base font-bold m-0">AI Audit Summary</h3>
             </div>
-            <p className="summary-text">{aiSummary}</p>
-          </div>
+            <p className="text-sm leading-relaxed text-muted-foreground m-0">{aiSummary}</p>
+          </Card>
         )}
 
         {/* Tool Cards */}
-        <div className="shared-tools">
+        <div className="flex flex-col gap-4 mb-8">
           {result.toolResults.map((tr) => (
             <ToolCard key={tr.toolId} result={tr} />
           ))}
         </div>
 
+        <CredexCta
+          monthlySavings={result.totalMonthlySavings}
+          savingsTier={result.savingsTier}
+        />
+
         {/* CTA */}
-        <div className="shared-cta teal-card">
+        <Card className="flex flex-col md:flex-row items-center justify-between gap-8 p-8 mt-8 bg-primary text-primary-foreground rounded-3xl border-transparent text-center md:text-left">
           <div>
-            <h3 className="cta-title">Want to find your own savings?</h3>
-            <p className="cta-text">Run a free BurnLens audit on your AI tool stack — takes under 2 minutes.</p>
+            <h3 className="text-lg font-bold text-white mb-1.5">Want to find your own savings?</h3>
+            <p className="text-sm text-primary-foreground/70 max-w-[500px] leading-relaxed m-0">
+              Run a free CredexAudit audit on your AI tool stack — takes under 2 minutes.
+            </p>
           </div>
-          <Link href="/audit" className="btn-green" style={{ textDecoration: "none", whiteSpace: "nowrap" }}>
-            Audit My AI Spend — Free
-            <ArrowRight size={16} />
-          </Link>
-        </div>
+          <Button size="lg" asChild className="rounded-full shrink-0 bg-[#0FF395] text-[#112F34] hover:bg-[#0AD87D]">
+            <Link href="/audit">
+              Audit My AI Spend — Free
+              <ArrowRight size={16} className="ml-2" />
+            </Link>
+          </Button>
+        </Card>
       </main>
-
-      <style jsx>{`
-        .shared-page { min-height: 100vh; padding-bottom: 4rem; background: var(--bg-primary); }
-
-        .shared-nav {
-          position: sticky; top: 0; z-index: 50; padding: 1rem 0;
-          background: rgba(244, 247, 250, 0.9); backdrop-filter: blur(20px);
-          border-bottom: 1px solid var(--border-card);
-        }
-        .shared-nav-inner { display: flex; align-items: center; justify-content: space-between; }
-        .shared-nav-brand {
-          display: flex; align-items: center; gap: 0.5rem;
-          text-decoration: none; color: var(--text-primary); font-weight: 700; font-size: 1.1rem;
-        }
-        .shared-nav-actions { display: flex; gap: 0.5rem; }
-
-        .shared-main { padding-top: 2rem; }
-        .shared-badge-row { text-align: center; margin-bottom: 1rem; }
-
-        .shared-hero { text-align: center; margin-bottom: 2.5rem; }
-        .shared-hero-title { font-size: clamp(1.75rem, 4vw, 2.75rem); font-weight: 800; margin-bottom: 0.5rem; }
-        .shared-period { font-size: 0.5em; color: var(--text-tertiary); font-weight: 500; }
-        .shared-subtitle { color: var(--text-secondary); font-size: 1rem; }
-
-        .shared-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
-        .shared-stat { display: flex; flex-direction: column; align-items: center; padding: 1.5rem; text-align: center; }
-        .shared-stat-value { font-size: 1.25rem; font-weight: 800; color: white; }
-        .shared-stat-label { font-size: 0.75rem; color: var(--text-on-dark-secondary); margin-top: 0.25rem; }
-
-        .summary-card { padding: 1.5rem; margin-bottom: 1.5rem; }
-        .summary-header { display: flex; align-items: center; gap: 0.625rem; margin-bottom: 1rem; }
-        .summary-title { font-size: 1rem; font-weight: 700; margin: 0; }
-        .summary-text { font-size: 0.9rem; line-height: 1.7; color: var(--text-secondary); }
-
-        .shared-tools { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
-
-        .shared-cta {
-          padding: 2rem; display: flex; align-items: center; justify-content: space-between;
-          gap: 2rem;
-        }
-        .cta-title { font-size: 1.1rem; font-weight: 700; margin: 0 0 0.375rem; color: white; }
-        .cta-text { font-size: 0.85rem; color: var(--text-on-dark-secondary); margin: 0; max-width: 500px; line-height: 1.6; }
-
-        @media (max-width: 768px) {
-          .shared-stats { grid-template-columns: 1fr; }
-          .shared-cta { flex-direction: column; text-align: center; }
-          .shared-nav-actions { flex-direction: column; }
-        }
-      `}</style>
     </div>
   );
 }

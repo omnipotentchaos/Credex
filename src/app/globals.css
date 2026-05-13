@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
+@source "../../src";
 
 /* ============================================
    BurnLens Design System — Credex Brand
@@ -72,55 +73,112 @@
   --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ---------- Base Reset ---------- */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-html {
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  :root {
+    --background: #F4F7FA;
+    --foreground: #0F1419;
+    --card: #FFFFFF;
+    --card-foreground: #0F1419;
+    --popover: #FFFFFF;
+    --popover-foreground: #0F1419;
+    --primary: #112F34;
+    --primary-foreground: #FFFFFF;
+    --secondary: #EEF2F6;
+    --secondary-foreground: #0F1419;
+    --muted: #EEF2F6;
+    --muted-foreground: #536471;
+    --accent: #EEF2F6;
+    --accent-foreground: #0F1419;
+    --destructive: #ef4444;
+    --destructive-foreground: #FFFFFF;
+    --border: #E1E8ED;
+    --input: #E1E8ED;
+    --ring: #0AD87D;
+    --chart-1: #0FF395;
+    --chart-2: #112F34;
+    --chart-3: #F5C542;
+    --chart-4: #2b3137;
+    --chart-5: #06b6d4;
+    --radius: 1rem;
+  }
 }
 
-body {
-  font-family: var(--font-sans);
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.6;
-  min-height: 100vh;
-  overflow-x: hidden;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ---------- Typography ---------- */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: var(--text-primary);
+  }
+
+  h1 { font-size: clamp(2.5rem, 5vw, 4rem); }
+  h2 { font-size: clamp(1.75rem, 3.5vw, 2.5rem); }
+  h3 { font-size: clamp(1.25rem, 2.5vw, 1.75rem); }
 }
 
-/* ---------- Typography ---------- */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.025em;
-  color: var(--text-primary);
-}
+@layer components {
+  /* ---------- Accent Text ---------- */
+  .gradient-text {
+    color: var(--credex-green-dark);
+  }
 
-h1 { font-size: clamp(2.5rem, 5vw, 4rem); }
-h2 { font-size: clamp(1.75rem, 3.5vw, 2.5rem); }
-h3 { font-size: clamp(1.25rem, 2.5vw, 1.75rem); }
+  .text-green {
+    color: var(--credex-green);
+  }
 
-/* ---------- Accent Text ---------- */
-.gradient-text {
-  color: var(--credex-green-dark);
-}
-
-.text-green {
-  color: var(--credex-green);
-}
-
-/* ---------- Container ---------- */
-.container {
-  max-width: var(--container-max);
-  margin: 0 auto;
-  padding: 0 var(--container-padding);
-}
+  /* ---------- Container ---------- */
+  .container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
 
 /* ---------- Cards ---------- */
 .glass-card {
@@ -378,24 +436,26 @@ select.input-field option {
   line-height: 1.6;
 }
 
-/* ---------- Navbar ---------- */
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  padding: 0.75rem 0;
-  background: rgba(244, 247, 250, 0.85);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--border-card);
-  border-radius: var(--radius-full);
-  max-width: calc(var(--container-max) - 4rem);
-  margin: 1rem auto 0;
+  /* ---------- Navbar ---------- */
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0.75rem 0;
+    background: rgba(244, 247, 250, 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-full);
+    max-width: calc(var(--container-max) - 4rem);
+    margin: 1rem auto 0;
+  }
 }
 
-/* ---------- Scrollbar ---------- */
-::-webkit-scrollbar {
-  width: 8px;
-}
+@layer base {
+  /* ---------- Scrollbar ---------- */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
 
 ::-webkit-scrollbar-track {
   background: var(--bg-secondary);
@@ -422,22 +482,24 @@ select.input-field option {
   outline-offset: 2px;
 }
 
-/* ---------- Responsive ---------- */
-@media (max-width: 768px) {
-  :root {
-    --container-padding: 1rem;
-  }
+  /* ---------- Responsive ---------- */
+  @media (max-width: 768px) {
+    :root {
+      --container-padding: 1rem;
+    }
 
-  .section {
-    padding: 3rem 0;
-  }
+    .section {
+      padding: 3rem 0;
+    }
 
-  h1 { font-size: 2rem; }
-  h2 { font-size: 1.5rem; }
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.5rem; }
+  }
 }
 
 /* ---------- Accessibility ---------- */
-.skip-link {
+@layer components {
+  .skip-link {
   position: absolute;
   left: -9999px;
   top: 0;
@@ -454,9 +516,10 @@ select.input-field option {
   left: 0;
 }
 
-*:focus-visible {
-  outline: 2px solid var(--credex-green-dark);
-  outline-offset: 2px;
+  *:focus-visible {
+    outline: 2px solid var(--credex-green-dark);
+    outline-offset: 2px;
+  }
 }
 
 /* Reduced motion preference */
@@ -466,4 +529,9 @@ select.input-field option {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }

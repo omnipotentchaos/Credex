@@ -21,10 +21,23 @@ import {
 } from "@/lib/pricing-data";
 import { type ToolEntry, type AuditInput, runAudit } from "@/lib/audit-engine";
 
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 // ============================================================
 // Local storage key
 // ============================================================
-const STORAGE_KEY = "burnlens-audit-form";
+const STORAGE_KEY = "CredexAudit-audit-form";
 
 interface FormState {
   tools: ToolEntry[];
@@ -47,7 +60,12 @@ export default function AuditFormPage() {
     if (typeof window === "undefined") return DEFAULT_FORM;
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) return JSON.parse(saved) as FormState;
+      if (saved) {
+        const parsed = JSON.parse(saved) as FormState;
+        // Filter out tools that no longer exist in the config
+        parsed.tools = parsed.tools.filter(t => TOOLS_MAP[t.toolId]);
+        return parsed;
+      }
     } catch {
       // Ignore parse errors
     }
@@ -145,8 +163,8 @@ export default function AuditFormPage() {
     };
 
     const result = runAudit(input);
-    sessionStorage.setItem("burnlens-audit-result", JSON.stringify(result));
-    sessionStorage.setItem("burnlens-audit-input", JSON.stringify(input));
+    sessionStorage.setItem("CredexAudit-audit-result", JSON.stringify(result));
+    sessionStorage.setItem("CredexAudit-audit-input", JSON.stringify(input));
     router.push("/audit/results");
   };
 
@@ -154,49 +172,48 @@ export default function AuditFormPage() {
   const canAddMore = usedToolIds.size < ALL_TOOLS.length;
 
   return (
-    <div className="audit-page">
+    <div className="min-h-screen pb-32 bg-background">
       {/* Navbar */}
-      <nav className="audit-nav">
-        <div className="container audit-nav-inner">
-          <Link href="/" className="audit-nav-brand" aria-label="Back to home">
+      <nav className="sticky top-0 z-50 border-b bg-background/90 py-4 backdrop-blur-xl">
+        <div className="container mx-auto max-w-4xl flex items-center justify-between px-6">
+          <Link href="/" className="flex items-center gap-2 font-bold text-muted-foreground transition-colors hover:text-foreground no-underline">
             <ArrowLeft size={18} />
             <Zap size={20} color="#0FF395" />
-            <span className="audit-nav-text">
-              Burn<span style={{ color: "#0AD87D" }}>Lens</span>
+            <span className="text-foreground">
+              Burn<span className="text-[#0AD87D]">Lens</span>
             </span>
           </Link>
-          <div className="badge" style={{ fontSize: "0.75rem", gap: "0.25rem" }}>
+          <Badge variant="outline" className="gap-1.5 text-xs text-muted-foreground bg-secondary/50">
             <Save size={12} />
             Auto-saved
-          </div>
+          </Badge>
         </div>
       </nav>
 
-      <main className="container audit-main">
+      <main className="container mx-auto max-w-4xl px-6 pt-12">
         {/* Header */}
-        <div className="audit-header">
-          <h1 className="audit-title">
-            Tell us about your <span className="gradient-text">AI stack</span>
+        <div className="mb-10 text-center">
+          <h1 className="mb-3 text-3xl font-bold md:text-4xl">
+            Tell us about your <span className="text-[#0AD87D]">AI stack</span>
           </h1>
-          <p className="audit-subtitle">
+          <p className="mx-auto max-w-xl text-lg text-muted-foreground">
             Add the AI tools your team pays for. We&apos;ll analyze each one and
             find where you can save.
           </p>
         </div>
 
         {/* Team info row */}
-        <div className="audit-team-row glass-card">
-          <div className="audit-field">
-            <label className="input-label" htmlFor="team-size">
+        <Card className="mb-8 grid gap-6 p-6 sm:grid-cols-[200px_1fr] rounded-2xl shadow-sm">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="team-size" className="flex items-center gap-1.5 text-muted-foreground">
               <Users size={14} />
               Team Size
-            </label>
-            <input
+            </Label>
+            <Input
               id="team-size"
               type="number"
               min={1}
               max={10000}
-              className="input-field"
               value={form.teamSize}
               onChange={(e) =>
                 setForm((prev) => ({
@@ -206,59 +223,55 @@ export default function AuditFormPage() {
               }
             />
           </div>
-          <div className="audit-field">
-            <label className="input-label" htmlFor="use-case">
-              Primary Use Case
-            </label>
-            <select
-              id="use-case"
-              className="input-field"
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="use-case" className="text-muted-foreground">Primary Use Case</Label>
+            <Select
               value={form.useCase}
-              onChange={(e) =>
+              onValueChange={(val) =>
                 setForm((prev) => ({
                   ...prev,
-                  useCase: e.target.value as UseCase,
+                  useCase: val as UseCase,
                 }))
               }
             >
-              {USE_CASES.map((uc) => (
-                <option key={uc.id} value={uc.id}>
-                  {uc.label} — {uc.description}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger id="use-case">
+                <SelectValue placeholder="Select primary use case" />
+              </SelectTrigger>
+              <SelectContent>
+                {USE_CASES.map((uc) => (
+                  <SelectItem key={uc.id} value={uc.id}>
+                    {uc.label} — {uc.description}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        </div>
+        </Card>
 
         {/* Tool cards */}
-        <div className="audit-tools-section">
-          <div className="audit-tools-header">
-            <h2 className="audit-tools-title">Your AI Tools</h2>
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-xl font-bold">Your AI Tools</h2>
             {canAddMore && (
-              <button
-                className="btn-secondary"
-                onClick={addTool}
-                id="add-tool-btn"
-                style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}
-              >
+              <Button variant="outline" size="sm" onClick={addTool} id="add-tool-btn" className="gap-2 rounded-full">
                 <Plus size={16} />
                 Add Tool
-              </button>
+              </Button>
             )}
           </div>
 
           {form.tools.length === 0 ? (
-            <div className="audit-empty glass-card">
-              <p className="audit-empty-text">
+            <Card className="flex flex-col items-center gap-6 p-12 text-center rounded-2xl border-dashed">
+              <p className="text-muted-foreground">
                 No tools added yet. Click &quot;Add Tool&quot; to get started.
               </p>
-              <button className="btn-primary" onClick={addTool} id="add-first-tool-btn">
+              <Button onClick={addTool} id="add-first-tool-btn" className="gap-2 rounded-full px-6">
                 <Plus size={18} />
                 Add Your First Tool
-              </button>
-            </div>
+              </Button>
+            </Card>
           ) : (
-            <div className="audit-tools-grid">
+            <div className="grid gap-4 sm:grid-cols-2">
               {form.tools.map((entry, index) => {
                 const tool = TOOLS_MAP[entry.toolId];
                 const selectedPlan = tool.plans.find(
@@ -266,72 +279,76 @@ export default function AuditFormPage() {
                 );
 
                 return (
-                  <div key={index} className="audit-tool-card glass-card">
-                    <div className="audit-tool-card-header">
+                  <Card key={index} className="p-5 rounded-2xl shadow-sm">
+                    <div className="mb-4 flex items-center gap-3">
                       <div
-                        className="audit-tool-dot"
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-xs font-bold text-white"
                         style={{ background: tool.color }}
                       >
                         {tool.name.charAt(0)}
                       </div>
-                      <select
-                        className="input-field audit-tool-select"
+                      <Select
                         value={entry.toolId}
-                        onChange={(e) =>
-                          handleToolChange(index, e.target.value as ToolId)
-                        }
-                        aria-label={`Tool ${index + 1} name`}
+                        onValueChange={(val) => handleToolChange(index, val as ToolId)}
                       >
-                        {ALL_TOOLS.map((t) => (
-                          <option
-                            key={t.id}
-                            value={t.id}
-                            disabled={usedToolIds.has(t.id) && t.id !== entry.toolId}
-                          >
-                            {t.name}
-                          </option>
-                        ))}
-                      </select>
-                      <button
-                        className="audit-tool-remove"
+                        <SelectTrigger className="flex-1 font-semibold border-transparent bg-secondary/50 hover:bg-secondary">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {ALL_TOOLS.map((t) => (
+                            <SelectItem
+                              key={t.id}
+                              value={t.id}
+                              disabled={usedToolIds.has(t.id) && t.id !== entry.toolId}
+                            >
+                              {t.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0 h-9 w-9"
                         onClick={() => removeTool(index)}
                         aria-label={`Remove ${tool.name}`}
                       >
                         <Trash2 size={16} />
-                      </button>
+                      </Button>
                     </div>
 
-                    <div className="audit-tool-fields">
-                      <div className="audit-field">
-                        <label className="input-label">Plan</label>
-                        <select
-                          className="input-field"
+                    <div className="flex flex-col gap-3">
+                      <div className="flex flex-col gap-1.5">
+                        <Label className="text-xs text-muted-foreground font-medium">Plan</Label>
+                        <Select
                           value={entry.planId}
-                          onChange={(e) =>
-                            handlePlanChange(index, e.target.value, entry.toolId)
-                          }
+                          onValueChange={(val) => handlePlanChange(index, val, entry.toolId)}
                         >
-                          {tool.plans.map((p) => (
-                            <option key={p.id} value={p.id}>
-                              {p.name}
-                              {p.pricePerSeat > 0
-                                ? ` — $${p.pricePerSeat}/seat/mo`
-                                : p.pricePerSeat === 0
-                                ? " — Free"
-                                : " — Custom"}
-                            </option>
-                          ))}
-                        </select>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {tool.plans.map((p) => (
+                              <SelectItem key={p.id} value={p.id}>
+                                {p.name}
+                                {p.pricePerSeat > 0
+                                  ? ` — $${p.pricePerSeat}/seat/mo`
+                                  : p.pricePerSeat === 0
+                                  ? " — Free"
+                                  : " — Custom"}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
 
-                      <div className="audit-field-row">
-                        <div className="audit-field">
-                          <label className="input-label">Seats</label>
-                          <input
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="flex flex-col gap-1.5">
+                          <Label className="text-xs text-muted-foreground font-medium">Seats</Label>
+                          <Input
                             type="number"
                             min={1}
                             max={10000}
-                            className="input-field"
                             value={entry.seats}
                             onChange={(e) => {
                               const seats = Math.max(
@@ -352,12 +369,11 @@ export default function AuditFormPage() {
                             }}
                           />
                         </div>
-                        <div className="audit-field">
-                          <label className="input-label">Monthly Spend ($)</label>
-                          <input
+                        <div className="flex flex-col gap-1.5">
+                          <Label className="text-xs text-muted-foreground font-medium">Monthly Spend ($)</Label>
+                          <Input
                             type="number"
                             min={0}
-                            className="input-field"
                             value={entry.monthlySpend}
                             onChange={(e) =>
                               updateTool(index, {
@@ -372,282 +388,51 @@ export default function AuditFormPage() {
                       </div>
 
                       {selectedPlan && (
-                        <p className="audit-tool-best-for">
+                        <p className="text-xs italic text-muted-foreground mt-1">
                           Best for: {selectedPlan.bestFor}
                         </p>
                       )}
                     </div>
-                  </div>
+                  </Card>
                 );
               })}
             </div>
           )}
         </div>
 
-        {/* Submit */}
+        {/* Submit Bar */}
         {form.tools.length > 0 && (
-          <div className="audit-submit-section">
-            <div className="audit-summary-bar glass-card">
-              <div className="audit-summary-stat">
-                <span className="audit-summary-label">Tools</span>
-                <span className="audit-summary-value">{form.tools.length}</span>
+          <div className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 p-4 backdrop-blur-xl shadow-[0_-4px_24px_rgba(0,0,0,0.04)]">
+            <div className="mx-auto flex max-w-4xl flex-wrap items-center gap-6 px-2 sm:px-6">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Tools</span>
+                <span className="text-lg font-bold">{form.tools.length}</span>
               </div>
-              <div className="audit-summary-stat">
-                <span className="audit-summary-label">Total Monthly</span>
-                <span className="audit-summary-value">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Total Monthly</span>
+                <span className="text-lg font-bold">
                   ${form.tools.reduce((s, t) => s + t.monthlySpend, 0).toLocaleString()}
                 </span>
               </div>
-              <div className="audit-summary-stat">
-                <span className="audit-summary-label">Total Seats</span>
-                <span className="audit-summary-value">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Total Seats</span>
+                <span className="text-lg font-bold">
                   {form.tools.reduce((s, t) => s + t.seats, 0)}
                 </span>
               </div>
-              <button
-                className="btn-primary"
+              <Button
+                size="lg"
+                className="ml-auto w-full gap-2 rounded-full sm:w-auto px-8"
                 onClick={handleSubmit}
                 id="run-audit-btn"
               >
                 Run Audit
                 <ArrowRight size={18} />
-              </button>
+              </Button>
             </div>
           </div>
         )}
       </main>
-
-      {/* Styles */}
-      <style jsx>{`
-        .audit-page {
-          min-height: 100vh;
-          padding-bottom: 8rem;
-          background: var(--bg-primary);
-        }
-        .audit-loading {
-          min-height: 100vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .loading-spinner {
-          width: 40px;
-          height: 40px;
-          border: 3px solid var(--border-card);
-          border-top-color: var(--credex-green-dark);
-          border-radius: 50%;
-          animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-
-        /* Nav */
-        .audit-nav {
-          position: sticky;
-          top: 0;
-          z-index: 50;
-          padding: 1rem 0;
-          background: rgba(244, 247, 250, 0.9);
-          backdrop-filter: blur(20px);
-          border-bottom: 1px solid var(--border-card);
-        }
-        .audit-nav-inner {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-        .audit-nav-brand {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          text-decoration: none;
-          color: var(--text-secondary);
-          font-weight: 700;
-          font-size: 1.1rem;
-          transition: color var(--transition-base);
-        }
-        .audit-nav-brand:hover {
-          color: var(--text-primary);
-        }
-        .audit-nav-text {
-          color: var(--text-primary);
-        }
-
-        /* Header */
-        .audit-main {
-          padding-top: 3rem;
-        }
-        .audit-header {
-          text-align: center;
-          margin-bottom: 2.5rem;
-        }
-        .audit-title {
-          font-size: clamp(1.75rem, 3vw, 2.25rem);
-          margin-bottom: 0.75rem;
-        }
-        .audit-subtitle {
-          color: var(--text-secondary);
-          font-size: 1.05rem;
-          max-width: 550px;
-          margin: 0 auto;
-        }
-
-        /* Team row */
-        .audit-team-row {
-          display: grid;
-          grid-template-columns: 200px 1fr;
-          gap: 1.5rem;
-          padding: 1.5rem;
-          margin-bottom: 2rem;
-        }
-        .audit-field {
-          display: flex;
-          flex-direction: column;
-          gap: 0.25rem;
-        }
-
-        /* Tools section */
-        .audit-tools-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 1rem;
-        }
-        .audit-tools-title {
-          font-size: 1.25rem;
-          font-weight: 700;
-        }
-
-        /* Empty state */
-        .audit-empty {
-          padding: 3rem;
-          text-align: center;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 1.5rem;
-        }
-        .audit-empty-text {
-          color: var(--text-tertiary);
-          font-size: 1rem;
-        }
-
-        /* Tool cards */
-        .audit-tools-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-          gap: 1rem;
-        }
-        .audit-tool-card {
-          padding: 1.25rem;
-        }
-        .audit-tool-card-header {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          margin-bottom: 1rem;
-        }
-        .audit-tool-dot {
-          width: 32px;
-          height: 32px;
-          border-radius: var(--radius-sm);
-          flex-shrink: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-weight: 700;
-          font-size: 0.8rem;
-        }
-        .audit-tool-select {
-          flex: 1;
-          font-weight: 600;
-        }
-        .audit-tool-remove {
-          background: none;
-          border: none;
-          color: var(--text-tertiary);
-          cursor: pointer;
-          padding: 0.375rem;
-          border-radius: var(--radius-sm);
-          transition: all var(--transition-fast);
-        }
-        .audit-tool-remove:hover {
-          color: #ef4444;
-          background: rgba(239, 68, 68, 0.08);
-        }
-        .audit-tool-fields {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-        }
-        .audit-field-row {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 0.75rem;
-        }
-        .audit-tool-best-for {
-          font-size: 0.8rem;
-          color: var(--text-tertiary);
-          font-style: italic;
-        }
-
-        /* Submit */
-        .audit-submit-section {
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          padding: 1rem var(--container-padding);
-          background: rgba(244, 247, 250, 0.92);
-          backdrop-filter: blur(20px);
-          border-top: 1px solid var(--border-card);
-          z-index: 50;
-        }
-        .audit-summary-bar {
-          max-width: var(--container-max);
-          margin: 0 auto;
-          display: flex;
-          align-items: center;
-          gap: 2rem;
-          padding: 1rem 1.5rem;
-        }
-        .audit-summary-stat {
-          display: flex;
-          flex-direction: column;
-        }
-        .audit-summary-label {
-          font-size: 0.7rem;
-          color: var(--text-tertiary);
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-        }
-        .audit-summary-value {
-          font-size: 1.15rem;
-          font-weight: 700;
-        }
-        .audit-summary-bar .btn-primary {
-          margin-left: auto;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-          .audit-team-row {
-            grid-template-columns: 1fr;
-          }
-          .audit-tools-grid {
-            grid-template-columns: 1fr;
-          }
-          .audit-summary-bar {
-            flex-wrap: wrap;
-            gap: 1rem;
-          }
-          .audit-summary-bar .btn-primary {
-            width: 100%;
-          }
-        }
-      `}</style>
     </div>
   );
 }

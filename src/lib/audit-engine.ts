@@ -1,5 +1,5 @@
 // ============================================================
-// BurnLens — Audit Engine
+// CredexAudit — Audit Engine
 // Rule-based audit logic. No AI here — hardcoded rules are correct.
 // ============================================================
 

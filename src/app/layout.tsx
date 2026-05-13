@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
 export const metadata: Metadata = {
-  title: "BurnLens — AI Spend Audit for Startups | by Credex",
+  metadataBase: new URL(siteUrl),
+  title: "CredexAudit — AI Spend Audit for Startups | by Credex",
   description:
     "Find out if you're overspending on AI tools. Get a free, instant audit of your Cursor, Copilot, Claude, ChatGPT, and Gemini spend — with actionable savings recommendations.",
   keywords: [
@@ -17,15 +21,15 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Credex", url: "https://credex.rocks" }],
   openGraph: {
-    title: "BurnLens — Stop Overspending on AI Tools",
+    title: "CredexAudit — Stop Overspending on AI Tools",
     description:
       "Free AI spend audit. See exactly where your team is overpaying on Cursor, Copilot, Claude, ChatGPT & more.",
     type: "website",
-    siteName: "BurnLens by Credex",
+    siteName: "CredexAudit by Credex",
   },
   twitter: {
     card: "summary_large_image",
-    title: "BurnLens — Stop Overspending on AI Tools",
+    title: "CredexAudit — Stop Overspending on AI Tools",
     description:
       "Free AI spend audit. See exactly where your team is overpaying on Cursor, Copilot, Claude, ChatGPT & more.",
   },

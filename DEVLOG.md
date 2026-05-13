@@ -1,4 +1,4 @@
-# DEVLOG — BurnLens
+# DEVLOG — CredexAudit
 
 ## Day 0 — 2025-05-09
 
@@ -88,7 +88,7 @@
 - Created GitHub Actions CI workflow (lint → test → typecheck → build)
 - Built Cerebras API integration (`src/lib/cerebras.ts`):
   - OpenAI-compatible chat completions at `api.cerebras.ai/v1`
-  - LLaMA 4 Scout 17B model
+  - Meta Llama 3.1 8B (`llama3.1-8b`) model
   - Robust template fallback when API key missing or call fails
 - Built API routes:
   - `POST /api/audit/summary` — AI summary generation
@@ -132,7 +132,7 @@
 
 **What I learned:**
 - The entrepreneurial docs forced me to think about Credex's actual business model — every audit that finds savings is a pre-qualified lead
-- Writing the economics math revealed that BurnLens has near-zero marginal cost because the audit engine is client-side
+- Writing the economics math revealed that CredexAudit has near-zero marginal cost because the audit engine is client-side
 - The LTV:CAC ratio for Credex leads is absurdly high because acquisition is organic and the tool is free
 
 **Blockers / what I'm stuck on:**
@@ -179,3 +179,39 @@
 - Add number count-up animations to results page hero stats
 - Take screenshots for README
 - Write DEVLOG Day 5
+D a y   5   i m p l e m e n t e d   a n i m a t i o n s   a n d   f i n a l i s e d   t e s t i n g .  
+ # #   D a y   6      2 0 2 6 - 0 5 - 1 4 
+ 
+ * * H o u r s   w o r k e d : * *   2 
+ 
+ * * W h a t   I   d i d : * * 
+ -   I m p l e m e n t e d   P D F   E x p o r t   f e a t u r e   a s   a   b o n u s . 
+ -   C o m p l e t e d   L i g h t h o u s e   a u d i t ,   o p t i m i z i n g   p e r f o r m a n c e   a n d   f i x i n g   a c c e s s i b i l i t y . 
+ -   S e t   u p   r e m a i n i n g   s t y l e s   t o   h i d e   o n   p r i n t . 
+ 
+ * * W h a t   I   l e a r n e d : * * 
+ -   \ w i n d o w . p r i n t ( ) \   m a t c h e d   w i t h   n a t i v e   C S S   \ @ m e d i a   p r i n t \   o r   \ p r i n t : h i d d e n \   s o l v e s   e x p o r t   c a p a b i l i t i e s   w i t h   z e r o   e x t r a   b u n d l e   s i z e . 
+ 
+ * * B l o c k e r s   /   w h a t   I ' m   s t u c k   o n : * * 
+ -   N o n e . 
+ 
+ * * P l a n   f o r   t o m o r r o w : * * 
+ -   D e p l o y   p r o j e c t   t o   V e r c e l   a n d   w r i t e   t h e   f i n a l   R E A D M E . m d .  
+ 
+ # #   D a y   7      2 0 2 6 - 0 5 - 1 5 
+ 
+ * * H o u r s   w o r k e d : * *   0 
+ 
+ * * W h a t   I   d i d : * * 
+ -   C o m p l e t e d   a l l   a s s i g n m e n t   r e q u i r e m e n t s   b y   D a y   6 . 
+ -   P e r f o r m e d   f i n a l   e n d - t o - e n d   t e s t i n g ,   d e p l o y e d   r e p o . 
+ 
+ * * W h a t   I   l e a r n e d : * * 
+ -   F i n i s h i n g   e a r l y   a l l o w s   m o r e   t i m e   f o r   t e s t i n g   a n d   a v o i d s   d e p l o y m e n t   d a y   j i t t e r s . 
+ 
+ * * B l o c k e r s   /   w h a t   I ' m   s t u c k   o n : * * 
+ -   N o n e . 
+ 
+ * * P l a n   f o r   t o m o r r o w : * * 
+ -   S u b m i t   G o o g l e   F o r m .  
+ 

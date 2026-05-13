@@ -1,8 +1,6 @@
 // ============================================================
-// CredexAudit — Pricing Data Constants
+// BurnLens — Pricing Data Constants
 // All prices verified May 2026. Sources in PRICING_DATA.md
-// FREE plans removed — audit only paid plans
-// API plans merged into parent vendor (Claude, ChatGPT, Gemini)
 // ============================================================
 
 export type ToolId =
@@ -10,6 +8,8 @@ export type ToolId =
   | "github-copilot"
   | "claude"
   | "chatgpt"
+  | "anthropic-api"
+  | "openai-api"
   | "gemini"
   | "windsurf";
 
@@ -18,7 +18,7 @@ export type UseCase = "coding" | "writing" | "data" | "research" | "mixed";
 export interface PlanInfo {
   id: string;
   name: string;
-  pricePerSeat: number; // Monthly price per seat in USD. 0 = usage-based, -1 = custom/contact sales
+  pricePerSeat: number; // Monthly price per seat in USD. 0 = free, -1 = custom/contact sales
   features: string[];
   bestFor: string; // Short description of ideal user
   minSeats?: number;
@@ -38,7 +38,7 @@ export interface ToolInfo {
 
 // ============================================================
 // CURSOR
-// Source: https://www.cursor.com/pricing — verified 2026-05-13
+// Source: https://www.cursor.com/pricing — verified 2026-05-10
 // ============================================================
 const cursor: ToolInfo = {
   id: "cursor",
@@ -50,45 +50,36 @@ const cursor: ToolInfo = {
   pricingUrl: "https://www.cursor.com/pricing",
   plans: [
     {
+      id: "cursor-hobby",
+      name: "Hobby",
+      pricePerSeat: 0,
+      features: ["Limited agent requests", "Limited tab completions"],
+      bestFor: "Individual hobbyists trying Cursor",
+    },
+    {
       id: "cursor-pro",
       name: "Pro",
       pricePerSeat: 20,
       features: [
-        "$20/mo monthly (May 2026)",
-        "~$16/mo when billed yearly",
-        "Frontier models, MCPs, cloud agents",
+        "Extended agent limits",
+        "Frontier models",
+        "MCPs, skills, hooks",
+        "Cloud agents",
       ],
       bestFor: "Individual developers using AI daily",
-    },
-    {
-      id: "cursor-pro-plus",
-      name: "Pro+",
-      pricePerSeat: 60,
-      features: [
-        "$60/mo monthly (May 2026)",
-        "Higher usage vs Pro on frontier models",
-      ],
-      bestFor: "Heavy individual use across multiple frontier models",
-    },
-    {
-      id: "cursor-ultra",
-      name: "Ultra",
-      pricePerSeat: 200,
-      features: [
-        "$200/mo monthly (May 2026)",
-        "Maximum usage tier for individuals",
-      ],
-      bestFor: "Power users needing the top Individual quota",
     },
     {
       id: "cursor-business",
       name: "Teams",
       pricePerSeat: 40,
       features: [
-        "$40/user/mo monthly · ~$32/user/mo yearly (May 2026)",
-        "Shared team context, rules, automations",
-        "SAML/OIDC SSO, privacy mode, analytics",
+        "Everything in Pro",
+        "Shared chats & rules",
         "Centralized billing",
+        "Usage analytics",
+        "Privacy mode",
+        "RBAC",
+        "SAML/OIDC SSO",
       ],
       bestFor: "Teams needing shared config and admin controls",
       minSeats: 2,
@@ -113,7 +104,7 @@ const cursor: ToolInfo = {
 
 // ============================================================
 // GITHUB COPILOT
-// Source: https://github.com/features/copilot/plans — verified 2026-05-13
+// Source: https://github.com/features/copilot/plans — verified 2026-05-10
 // ============================================================
 const githubCopilot: ToolInfo = {
   id: "github-copilot",
@@ -125,13 +116,26 @@ const githubCopilot: ToolInfo = {
   pricingUrl: "https://github.com/features/copilot/plans",
   plans: [
     {
+      id: "copilot-free",
+      name: "Free",
+      pricePerSeat: 0,
+      features: [
+        "50 chat requests/mo",
+        "2000 completions/mo",
+        "Haiku 4.5, GPT-5 mini",
+      ],
+      bestFor: "Students and hobbyists",
+    },
+    {
       id: "copilot-pro",
       name: "Pro",
       pricePerSeat: 10,
       features: [
-        "Copilot cloud agent & code review",
-        "300 premium requests/mo",
-        "Claude & Codex on GitHub & VS Code",
+        "Unlimited completions",
+        "300 premium requests",
+        "Cloud agent",
+        "Code review",
+        "Claude & Codex on GitHub",
       ],
       bestFor: "Individual professional developers",
     },
@@ -141,9 +145,9 @@ const githubCopilot: ToolInfo = {
       pricePerSeat: 39,
       features: [
         "Everything in Pro",
-        "Claude Opus 4.7 & frontier models",
-        "~5× premium requests vs Pro",
-        "GitHub Spark (May 2026)",
+        "All models incl. Claude Opus",
+        "5x premium requests",
+        "GitHub Spark",
       ],
       bestFor: "Power users needing frontier models",
     },
@@ -178,8 +182,8 @@ const githubCopilot: ToolInfo = {
 };
 
 // ============================================================
-// CLAUDE (Anthropic — consumer + API plans merged)
-// Source: https://www.anthropic.com/pricing — verified 2026-05-13
+// CLAUDE (Anthropic consumer plans)
+// Source: https://www.anthropic.com/pricing — verified 2026-05-10
 // ============================================================
 const claude: ToolInfo = {
   id: "claude",
@@ -191,13 +195,29 @@ const claude: ToolInfo = {
   pricingUrl: "https://www.anthropic.com/pricing",
   plans: [
     {
+      id: "claude-free",
+      name: "Free",
+      pricePerSeat: 0,
+      features: [
+        "Web, iOS, Android, Desktop",
+        "Code generation",
+        "Web search",
+        "Memory",
+        "Extended thinking",
+      ],
+      bestFor: "Casual users and evaluation",
+    },
+    {
       id: "claude-pro",
       name: "Pro",
       pricePerSeat: 20,
       features: [
-        "$20/mo monthly · $17/mo annually ($200/yr)",
-        "Claude Code, Cowork, Research",
-        "M365 integration, unlimited projects",
+        "More usage",
+        "Claude Code",
+        "Claude Cowork",
+        "Unlimited projects",
+        "Research",
+        "Microsoft 365 integration",
       ],
       bestFor: "Individual professionals and power users",
     },
@@ -230,69 +250,38 @@ const claude: ToolInfo = {
       name: "Team",
       pricePerSeat: 25,
       features: [
-        "Standard seat: $25/mo monthly · $20/mo annual",
-        "Premium seat: $125/mo · $100/mo annual (5× usage)",
-        "Claude Code & Cowork, M365/Slack, enterprise search",
+        "Claude Code & Cowork",
+        "Microsoft 365 & Slack",
+        "Enterprise search",
+        "Central billing",
+        "SSO",
+        "Admin controls",
+        "No training on content",
       ],
       bestFor: "Small-medium teams needing collaboration",
-      minSeats: 5,
+      minSeats: 2,
     },
     {
       id: "claude-enterprise",
       name: "Enterprise",
-      pricePerSeat: 20,
+      pricePerSeat: -1,
       features: [
-        "$20/seat + usage at API rates",
-        "Spend controls, SCIM, audit logs",
-        "Compliance API, HIPAA-ready",
-        "IP allowlisting, custom retention",
+        "Spend controls",
+        "SCIM",
+        "Audit logs",
+        "Compliance API",
+        "Custom data retention",
+        "HIPAA-ready",
       ],
       bestFor: "Large orgs with strict compliance needs",
       minSeats: 10,
-    },
-    {
-      id: "claude-api-opus",
-      name: "API — Opus 4.7",
-      pricePerSeat: 0,
-      isApi: true,
-      features: [
-        "Input: $5/MTok · Output: $25/MTok",
-        "Cache write: $6.25/MTok · Cache read: $0.50/MTok",
-        "Most intelligent model for agents and coding",
-      ],
-      bestFor: "Developers building with the most powerful Claude model",
-    },
-    {
-      id: "claude-api-sonnet",
-      name: "API — Sonnet 4.6",
-      pricePerSeat: 0,
-      isApi: true,
-      features: [
-        "Input: $3/MTok · Output: $15/MTok",
-        "Cache write: $3.75/MTok · Cache read: $0.30/MTok",
-        "Optimal balance of intelligence, cost, and speed",
-      ],
-      bestFor: "Developers wanting quality at moderate cost",
-    },
-    {
-      id: "claude-api-haiku",
-      name: "API — Haiku 4.5",
-      pricePerSeat: 0,
-      isApi: true,
-      features: [
-        "Input: $1/MTok · Output: $5/MTok",
-        "Cache write: $1.25/MTok · Cache read: $0.10/MTok",
-        "Fastest, most cost-efficient model",
-      ],
-      bestFor: "High-volume, cost-sensitive API applications",
     },
   ],
 };
 
 // ============================================================
-// CHATGPT (OpenAI — consumer + API plans merged)
-// Source: https://openai.com/chatgpt/pricing + https://openai.com/api/pricing
-// Verified 2026-05-13
+// CHATGPT (OpenAI consumer plans)
+// Source: https://openai.com/chatgpt/pricing — verified 2026-05-10
 // ============================================================
 const chatgpt: ToolInfo = {
   id: "chatgpt",
@@ -304,48 +293,38 @@ const chatgpt: ToolInfo = {
   pricingUrl: "https://openai.com/chatgpt/pricing",
   plans: [
     {
-      id: "chatgpt-go",
-      name: "Go",
-      pricePerSeat: 8,
-      features: [
-        "More GPT-5.5 Instant",
-        "More messages & uploads",
-        "More image creation, longer memory",
-      ],
-      bestFor: "Users between Free and Plus",
+      id: "chatgpt-free",
+      name: "Free",
+      pricePerSeat: 0,
+      features: ["GPT-5 mini", "Limited messages", "Web search"],
+      bestFor: "Casual users",
     },
     {
       id: "chatgpt-plus",
       name: "Plus",
       pricePerSeat: 20,
       features: [
-        "GPT-5.5 Thinking",
-        "Expanded messages & uploads",
-        "Deeper research & agent mode",
+        "GPT-5",
+        "DALL-E",
+        "Advanced data analysis",
+        "Higher limits",
+        "Custom GPTs",
       ],
       bestFor: "Individual professionals",
     },
     {
-      id: "chatgpt-pro",
-      name: "Pro",
-      pricePerSeat: 100,
+      id: "chatgpt-team",
+      name: "Team",
+      pricePerSeat: 25,
       features: [
-        "5× or 20× usage tiers",
-        "GPT-5.5 Pro & maximum Codex",
-        "Check site for limited-time Codex promos",
+        "Everything in Plus",
+        "Shared workspaces",
+        "Admin console",
+        "Data not used for training",
+        "SAML SSO",
+        "60+ integrations",
       ],
-      bestFor: "Power users with highest limits",
-    },
-    {
-      id: "chatgpt-business",
-      name: "Business (ChatGPT & Codex)",
-      pricePerSeat: 20,
-      features: [
-        "Everything in Plus + Business Codex capabilities",
-        "SAML SSO, MFA, admin controls",
-        "60+ workspace apps (Slack, Drive, GitHub, …)",
-      ],
-      bestFor: "Startups and SMBs on a per-seat plan",
+      bestFor: "Small-medium teams",
       minSeats: 2,
     },
     {
@@ -353,57 +332,79 @@ const chatgpt: ToolInfo = {
       name: "Enterprise",
       pricePerSeat: -1,
       features: [
-        "Custom security & compliance",
-        "SCIM, EKM, data residency",
-        "24/7 priority support, invoicing",
+        "Unlimited GPT-5",
+        "Advanced admin",
+        "SCIM",
+        "SSO",
+        "Audit logs",
+        "Custom data retention",
       ],
-      bestFor: "Large organizations (contact sales)",
-      minSeats: 10,
-    },
-    {
-      id: "openai-api-gpt55",
-      name: "API — GPT-5.5",
-      pricePerSeat: 0,
-      isApi: true,
-      features: [
-        "Input: $5/MTok · Cached: $0.50/MTok",
-        "Output: $30/MTok",
-        "Flagship model for coding and professional work",
-      ],
-      bestFor: "Developers building with the most powerful OpenAI model",
-    },
-    {
-      id: "openai-api-gpt54",
-      name: "API — GPT-5.4",
-      pricePerSeat: 0,
-      isApi: true,
-      features: [
-        "Input: $2.50/MTok · Cached: $0.25/MTok",
-        "Output: $15/MTok",
-        "More affordable model for coding and professional work",
-      ],
-      bestFor: "Developers wanting quality at moderate cost",
-    },
-    {
-      id: "openai-api-gpt54-mini",
-      name: "API — GPT-5.4 mini",
-      pricePerSeat: 0,
-      isApi: true,
-      features: [
-        "Input: $0.75/MTok · Cached: $0.075/MTok",
-        "Output: $4.50/MTok",
-        "Strongest mini model for coding, computer use, subagents",
-      ],
-      bestFor: "High-volume, cost-sensitive API applications",
+      bestFor: "Large organizations 150+ seats",
+      minSeats: 150,
     },
   ],
 };
 
 // ============================================================
-// GEMINI (Google — consumer + API plans merged)
-// Consumer: https://one.google.com/about/plans
-// API: https://ai.google.dev/pricing — verified 2026-05-13
-// INR prices converted to approximate USD
+// ANTHROPIC API DIRECT
+// Source: https://www.anthropic.com/pricing#api — verified 2026-05-10
+// ============================================================
+const anthropicApi: ToolInfo = {
+  id: "anthropic-api",
+  name: "Anthropic API",
+  vendor: "Anthropic",
+  category: "api",
+  primaryUseCases: ["coding", "writing", "data", "research"],
+  color: "#d97706",
+  pricingUrl: "https://www.anthropic.com/pricing#api",
+  plans: [
+    {
+      id: "anthropic-api-direct",
+      name: "API Direct",
+      pricePerSeat: 0,
+      isApi: true,
+      features: [
+        "Pay per token",
+        "Opus, Sonnet, Haiku models",
+        "Usage-based pricing",
+      ],
+      bestFor: "Developers building applications with Claude",
+    },
+  ],
+};
+
+// ============================================================
+// OPENAI API DIRECT
+// Source: https://openai.com/pricing — verified 2026-05-10
+// ============================================================
+const openaiApi: ToolInfo = {
+  id: "openai-api",
+  name: "OpenAI API",
+  vendor: "OpenAI",
+  category: "api",
+  primaryUseCases: ["coding", "writing", "data", "research"],
+  color: "#10a37f",
+  pricingUrl: "https://openai.com/pricing",
+  plans: [
+    {
+      id: "openai-api-direct",
+      name: "API Direct",
+      pricePerSeat: 0,
+      isApi: true,
+      features: [
+        "Pay per token",
+        "GPT-5, GPT-5 mini, Codex",
+        "Usage-based pricing",
+      ],
+      bestFor: "Developers building applications with OpenAI models",
+    },
+  ],
+};
+
+// ============================================================
+// GEMINI (Google consumer plans + API)
+// Source: https://one.google.com/about/plans — verified 2026-05-10
+//         https://ai.google.dev/pricing — verified 2026-05-10
 // ============================================================
 const gemini: ToolInfo = {
   id: "gemini",
@@ -415,95 +416,49 @@ const gemini: ToolInfo = {
   pricingUrl: "https://ai.google.dev/pricing",
   plans: [
     {
-      id: "gemini-ai-plus",
-      name: "AI Plus",
-      pricePerSeat: 5,
+      id: "gemini-free",
+      name: "Free",
+      pricePerSeat: 0,
       features: [
-        "~₹399/mo INR (~$5/mo USD)",
-        "Enhanced access to Gemini 3.1 Pro",
-        "Deep Research, image generation",
-        "200 GB storage, Gemini in Gmail",
+        "Gemini Flash models",
+        "Limited access",
+        "Google AI Studio",
       ],
-      bestFor: "Individuals wanting enhanced Gemini access",
+      bestFor: "Casual users and evaluation",
     },
     {
-      id: "gemini-ai-pro",
-      name: "AI Pro",
-      pricePerSeat: 23,
+      id: "gemini-advanced",
+      name: "Advanced (AI Premium)",
+      pricePerSeat: 20,
       features: [
-        "~₹1,950/mo INR (~$23/mo USD)",
-        "Higher Gemini 3.1 Pro access",
-        "Veo 3.1 Lite video generation",
-        "Gemini Code Assist & CLI, 5TB storage",
+        "Gemini 2.5 Pro",
+        "1M token context",
+        "Google One AI Premium",
+        "2TB storage",
+        "Gemini in Workspace",
       ],
-      bestFor: "Developers and professionals in Google ecosystem",
+      bestFor: "Individual professionals in Google ecosystem",
     },
     {
-      id: "gemini-ai-ultra",
-      name: "AI Ultra",
-      pricePerSeat: 290,
-      features: [
-        "~₹24,500/mo INR (~$290/mo USD)",
-        "Highest access to all Google AI models",
-        "Maximum rate limits everywhere",
-        "Exclusive features",
-      ],
-      bestFor: "Power users needing maximum Google AI capacity",
-    },
-    {
-      id: "gemini-api-31-pro",
-      name: "API — 3.1 Pro",
+      id: "gemini-api",
+      name: "API (Pay-as-you-go)",
       pricePerSeat: 0,
       isApi: true,
       features: [
-        "Input: $2/MTok (≤200k) · $4/MTok (>200k)",
-        "Output: $12/MTok (≤200k) · $18/MTok (>200k)",
-        "Context caching, batch, grounding available",
+        "Pay per token",
+        "Gemini 3 Flash, 2.5 Pro",
+        "Free tier available",
+        "Context caching",
+        "Batch API",
       ],
-      bestFor: "Developers building with Gemini's most capable model",
-    },
-    {
-      id: "gemini-api-31-flash-lite",
-      name: "API — 3.1 Flash-Lite",
-      pricePerSeat: 0,
-      isApi: true,
-      features: [
-        "Input: $0.25/MTok · Output: $1.50/MTok",
-        "Most cost-efficient model",
-        "Optimized for high-volume agentic tasks",
-      ],
-      bestFor: "High-volume, cost-sensitive API applications",
-    },
-    {
-      id: "gemini-api-25-pro",
-      name: "API — 2.5 Pro",
-      pricePerSeat: 0,
-      isApi: true,
-      features: [
-        "Input: $1.25/MTok (≤200k) · $2.50/MTok (>200k)",
-        "Output: $10/MTok (≤200k) · $15/MTok (>200k)",
-        "Multipurpose model, excels at coding & reasoning",
-      ],
-      bestFor: "Developers wanting proven Gemini 2.5 quality",
-    },
-    {
-      id: "gemini-api-25-flash",
-      name: "API — 2.5 Flash",
-      pricePerSeat: 0,
-      isApi: true,
-      features: [
-        "Input: $0.30/MTok · Output: $2.50/MTok",
-        "Hybrid reasoning, 1M token context",
-        "Thinking budgets, batch API (50% off)",
-      ],
-      bestFor: "Developers wanting fast, affordable reasoning",
+      bestFor: "Developers building with Gemini models",
     },
   ],
 };
 
 // ============================================================
 // WINDSURF
-// Source: https://windsurf.com/pricing — verified 2026-05-13
+// Source: https://windsurf.com/pricing — verified 2026-05-10
 // ============================================================
 const windsurf: ToolInfo = {
   id: "windsurf",
@@ -515,13 +470,20 @@ const windsurf: ToolInfo = {
   pricingUrl: "https://windsurf.com/pricing",
   plans: [
     {
+      id: "windsurf-free",
+      name: "Free",
+      pricePerSeat: 0,
+      features: ["Tab completions", "Basic Cascade", "Limited usage"],
+      bestFor: "Individual developers trying Windsurf",
+    },
+    {
       id: "windsurf-pro",
       name: "Pro",
       pricePerSeat: 20,
       features: [
-        "2-week free trial (May 2026)",
-        "Frontier OpenAI, Claude, Gemini models",
-        "SWE-1.6 & higher Cascade quotas",
+        "Extended Cascade usage",
+        "All models",
+        "Priority support",
       ],
       bestFor: "Individual professional developers",
     },
@@ -573,6 +535,8 @@ export const ALL_TOOLS: ToolInfo[] = [
   githubCopilot,
   claude,
   chatgpt,
+  anthropicApi,
+  openaiApi,
   gemini,
   windsurf,
 ];
@@ -582,6 +546,8 @@ export const TOOLS_MAP: Record<ToolId, ToolInfo> = {
   "github-copilot": githubCopilot,
   claude,
   chatgpt,
+  "anthropic-api": anthropicApi,
+  "openai-api": openaiApi,
   gemini,
   windsurf,
 };

@@ -1,4 +1,4 @@
-# Architecture — BurnLens
+# Architecture — CredexAudit
 
 ## System Overview
 
@@ -8,10 +8,12 @@ graph TB
         LP["/ Landing Page"]
         AF["/audit — Spend Input Form"]
         AR["/audit/results — Audit Report"]
+        SP["/audit/share/[shareId] — Public share"]
     end
 
     subgraph API["API Routes — Next.js"]
         SM["POST /api/audit/summary"]
+        SV["POST /api/audit/save"]
         LC["POST /api/leads"]
     end
 
@@ -22,7 +24,7 @@ graph TB
 
     subgraph External["External Services"]
         SB[(Supabase Postgres)]
-        CB[Cerebras API — LLaMA 4 Scout]
+        CB[Cerebras API — Meta Llama 3.1 8B]
         RS[Resend Email]
     end
 
@@ -40,9 +42,12 @@ graph TB
     SS -->|"read on mount"| AR
     AR -->|"POST results"| SM
     SM -->|"chat completion"| CB
+    AR -->|"persist"| SV
+    SV -->|"audit_results row"| SB
     AR -->|"email + company"| LC
     LC -->|"insert lead"| SB
     LC -->|"send report"| RS
+    SP -->|"SSR read"| SB
 
     style Client fill:#112F34,stroke:#0FF395,color:#f1f5f9
     style API fill:#1a3a40,stroke:#0AD87D,color:#f1f5f9
@@ -110,17 +115,17 @@ This means the product **never breaks** if the AI service is down. The template 
 | **Next.js 16 (App Router)** | SSR for dynamic OG tags on shareable URLs; API routes eliminate need for a separate backend; Vercel deployment is zero-config |
 | **TypeScript** | Type safety for the audit engine's pricing data and calculation logic; catches bugs at compile time; no `any` types in codebase |
 | **Tailwind CSS v4** | `@import`-based architecture, rapid iteration on a design-heavy product; CSS custom properties for the Credex design system |
-| **Supabase** | Free-tier Postgres with REST API; real relational database; used for lead storage with planned expansion to full audit persistence |
-| **Cerebras API** | Ultra-fast inference (~200ms) for real-time summary generation; OpenAI-compatible API format; free tier available; LLaMA 4 Scout 17B is sufficient quality for short summaries |
-| **Resend** | 100 emails/day free tier; planned for transactional audit report emails |
+| **Supabase** | Free-tier Postgres with REST API; `audit_results` (shareable audits) and `leads` tables |
+| **Cerebras API** | Fast inference for summaries; OpenAI-compatible chat completions; **Meta Llama 3.1 8B** (`llama3.1-8b`) — see `src/lib/cerebras.ts` |
+| **Resend** | 100 emails/day free tier; transactional email after lead capture (`POST /api/leads`) |
 | **Vitest** | Fast, modern test runner with native TypeScript support; jsdom environment; 13 tests run in <15ms |
 
 ## Scaling to 10,000 Audits/Day
 
-If BurnLens needed to handle 10,000 audits per day:
+If CredexAudit needed to handle 10,000 audits per day:
 
 1. **Audit engine** — Already client-side. Scales infinitely with zero server cost. No changes needed.
-2. **AI summaries** — Move to a queue pattern. Cerebras API at 10k requests/day is ~$5/month (LLaMA 4 Scout pricing). Add a 60-second cache for identical audit profiles.
+2. **AI summaries** — Move to a queue pattern; add a 60-second cache for identical audit profiles. Revisit Cerebras pricing as volume grows.
 3. **Lead storage** — Supabase Pro tier ($25/mo) handles this volume easily. Add connection pooling via PgBouncer (included in Supabase). Index on `email` for dedup.
 4. **Email** — Move to Resend paid tier or AWS SES. Process asynchronously via a background queue to avoid blocking the API response.
 5. **CDN** — Vercel's edge network already caches static pages. The audit form and results pages are static (data is in browser storage), so they serve from edge at ~20ms globally.
@@ -136,11 +141,16 @@ src/
 │   ├── layout.tsx                  # Root layout + metadata
 │   ├── audit/
 │   │   ├── page.tsx                # Spend input form
-│   │   └── results/
-│   │       └── page.tsx            # Audit results + AI summary + lead capture
+│   │   ├── results/
+│   │   │   └── page.tsx            # Audit results + AI summary + lead capture
+│   │   └── share/[shareId]/        # SSR shared audit + OG metadata
+│   │       ├── page.tsx
+│   │       └── SharedAuditClient.tsx
 │   └── api/
 │       ├── audit/summary/route.ts  # Cerebras AI summary endpoint
-│       └── leads/route.ts          # Lead capture endpoint
+│       ├── audit/save/route.ts     # Persist audit + nanoid share_id
+│       ├── audit/[shareId]/route.ts # GET public audit JSON
+│       └── leads/route.ts          # Lead capture + Resend email
 └── lib/
     ├── audit-engine.ts             # Rule-based audit (6 checks)
     ├── pricing-data.ts             # Verified pricing constants

@@ -1,12 +1,13 @@
 // ============================================================
 // POST /api/audit/save
-// Saves audit result to Supabase + returns share_id
+// Saves audit result to Supabase + returns share_id + audit row id
 // ============================================================
 
 import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 import { getSupabase } from "@/lib/supabase";
 import type { AuditResult } from "@/lib/audit-engine";
+import { getSaveRateLimiter, rateLimitOr429 } from "@/lib/rate-limit";
 
 interface SaveRequest {
   input: Record<string, unknown>;
@@ -15,6 +16,13 @@ interface SaveRequest {
 }
 
 export async function POST(request: NextRequest) {
+  const limited = await rateLimitOr429(
+    request,
+    getSaveRateLimiter(),
+    "audit-save"
+  );
+  if (limited) return limited;
+
   try {
     const body = (await request.json()) as SaveRequest;
 
@@ -25,11 +33,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const shareId = nanoid(10); // Short, URL-safe ID
+    const shareId = nanoid(10);
 
     const supabase = getSupabase();
     if (!supabase) {
-      // Fallback: return a share_id but don't persist
       return NextResponse.json({
         shareId,
         persisted: false,
@@ -37,17 +44,21 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const { error } = await supabase.from("audit_results").insert({
-      share_id: shareId,
-      input_data: body.input,
-      result_data: body.result,
-      ai_summary: body.aiSummary || null,
-      total_monthly_spend: body.result.totalCurrentSpend,
-      total_monthly_savings: body.result.totalMonthlySavings,
-      total_annual_savings: body.result.totalAnnualSavings,
-      savings_tier: body.result.savingsTier,
-      is_public: true,
-    });
+    const { data, error } = await supabase
+      .from("audit_results")
+      .insert({
+        share_id: shareId,
+        input_data: body.input,
+        result_data: body.result,
+        ai_summary: body.aiSummary || null,
+        total_monthly_spend: body.result.totalCurrentSpend,
+        total_monthly_savings: body.result.totalMonthlySavings,
+        total_annual_savings: body.result.totalAnnualSavings,
+        savings_tier: body.result.savingsTier,
+        is_public: true,
+      })
+      .select("id")
+      .single();
 
     if (error) {
       console.error("Supabase save error:", error);
@@ -57,7 +68,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ shareId, persisted: true });
+    return NextResponse.json({
+      shareId,
+      auditId: data?.id as string | undefined,
+      persisted: true,
+    });
   } catch (error) {
     console.error("Audit save error:", error);
     return NextResponse.json(

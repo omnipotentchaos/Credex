@@ -5,11 +5,19 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
+import { getAuditGetRateLimiter, rateLimitOr429 } from "@/lib/rate-limit";
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ shareId: string }> }
 ) {
+  const limited = await rateLimitOr429(
+    request,
+    getAuditGetRateLimiter(),
+    "audit-get"
+  );
+  if (limited) return limited;
+
   const { shareId } = await params;
 
   if (!shareId) {
@@ -32,10 +40,7 @@ export async function GET(
     .single();
 
   if (error || !data) {
-    return NextResponse.json(
-      { error: "Audit not found" },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: "Audit not found" }, { status: 404 });
   }
 
   return NextResponse.json({

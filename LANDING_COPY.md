@@ -1,4 +1,4 @@
-# Landing Copy — BurnLens
+# Landing Copy — CredexAudit
 
 ## Hero Headline (≤10 words)
 **Stop Overspending on AI Tools**
@@ -18,7 +18,7 @@ Free audit that shows exactly where your team is wasting money on Cursor, Copilo
 ## Value Proposition Cards
 
 ### 1. See Your Real Costs
-Plug in your tools, plans, and seats. BurnLens maps your spend against current vendor pricing to spot plan mismatches and over-provisioned seats.
+Plug in your tools, plans, and seats. CredexAudit maps your spend against current vendor pricing to spot plan mismatches and over-provisioned seats.
 
 ### 2. Get Actionable Savings
 Every recommendation comes with dollar amounts, reasoning, and a specific action: downgrade, switch, or right-size. No vague "optimize your stack" advice.
@@ -40,7 +40,7 @@ See per-tool savings, AI-powered summary, and shareable results. No signup requi
 ## FAQ
 
 ### 1. Is this really free?
-Yes. BurnLens is a free tool built by Credex. There's no paywall, no trial, no credit card. We built it because helping teams understand their AI spend is the first step to saving — and Credex credits are the second.
+Yes. CredexAudit is a free tool built by Credex. There's no paywall, no trial, no credit card. We built it because helping teams understand their AI spend is the first step to saving — and Credex credits are the second.
 
 ### 2. How accurate are the savings estimates?
 Every price in our engine comes from official vendor pricing pages, verified and cited with URLs in our PRICING_DATA.md. Savings estimates use conservative math — we'd rather under-promise than over-promise.
@@ -49,7 +49,7 @@ Every price in our engine comes from official vendor pricing pages, verified and
 No. Your audit runs entirely in your browser. We only ask for an email if you want the full report sent to your inbox — and that's optional.
 
 ### 4. How does Credex make money from this?
-Credex operates a marketplace where companies buy and sell unused AI and cloud credits at a discount. When BurnLens finds savings opportunities, one recommendation is to check Credex for discounted credits. Credex earns a margin on those transactions.
+Credex operates a marketplace where companies buy and sell unused AI and cloud credits at a discount. When CredexAudit finds savings opportunities, one recommendation is to check Credex for discounted credits. Credex earns a margin on those transactions.
 
 ### 5. Is my data shared with anyone?
 No. Your tool and spend data is processed client-side and stored only in your browser's session storage. If you opt into the email report, we store your email and audit results on our servers — never shared with third parties.

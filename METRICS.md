@@ -1,10 +1,10 @@
-# Metrics — BurnLens
+# Metrics — CredexAudit
 
 ## North Star Metric
 
 **Qualified leads generated per week** — defined as users who complete an audit showing ≥$100/mo in savings AND submit their email.
 
-This metric directly measures BurnLens's value to Credex. A qualified lead has self-identified their AI spend pain, seen that savings exist, and opted in for follow-up. It captures both product quality (the audit must be compelling enough to complete) and business value (the lead is pre-qualified for Credex's marketplace).
+This metric directly measures CredexAudit's value to Credex. A qualified lead has self-identified their AI spend pain, seen that savings exist, and opted in for follow-up. It captures both product quality (the audit must be compelling enough to complete) and business value (the lead is pre-qualified for Credex's marketplace).
 
 ## Input Metrics
 

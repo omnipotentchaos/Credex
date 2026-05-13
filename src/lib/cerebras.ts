@@ -1,13 +1,13 @@
 // ============================================================
 // Cerebras AI Summary Generator
 // OpenAI-compatible endpoint: https://api.cerebras.ai/v1
-// Model: llama-4-scout-17b-16e-instruct (fast, free tier)
+// Model: llama3.1-8b (fast, free tier)
 // ============================================================
 
 import type { AuditResult } from "./audit-engine";
 
 const CEREBRAS_API_URL = "https://api.cerebras.ai/v1/chat/completions";
-const CEREBRAS_MODEL = "llama-4-scout-17b-16e-instruct";
+const CEREBRAS_MODEL = "llama3.1-8b";
 
 interface CerebrasMessage {
   role: "system" | "user" | "assistant";
@@ -38,7 +38,7 @@ function buildPrompt(result: AuditResult): CerebrasMessage[] {
   return [
     {
       role: "system",
-      content: `You are BurnLens, an AI spend audit assistant by Credex. Write a concise, personalized 80-120 word summary of this audit result. Be direct, specific with dollar amounts, and actionable. Use a professional but friendly tone. End with one sentence mentioning Credex credits as an additional saving opportunity. Do NOT use markdown formatting — write plain text only.`,
+      content: `You are CredexAudit, an AI spend audit assistant by Credex. Write a concise, personalized 80-120 word summary of this audit result. Be direct, specific with dollar amounts, and actionable. Use a professional but friendly tone. End with one sentence mentioning Credex credits as an additional saving opportunity. Do NOT use markdown formatting — write plain text only.`,
     },
     {
       role: "user",

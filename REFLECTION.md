@@ -1,4 +1,4 @@
-# Reflection — BurnLens
+# Reflection — CredexAudit
 
 ## 1. The hardest bug I hit this week
 
@@ -16,13 +16,15 @@ In retrospect, I should have studied the parent brand's design language *before*
 
 ## 3. What I would build in week 2
 
-Three features, in priority order:
+Shipped since this reflection was first drafted: **shareable audits** (`nanoid` `share_id`, Supabase `audit_results`, `/audit/share/[shareId]` with dynamic title/description for Open Graph and Twitter), plus **Resend** HTML mail from `POST /api/leads` with a link back to the shared audit.
 
-1. **Shareable audit URLs** — Generate a unique `share_id` for each audit, persist to Supabase, and build a public `/audit/[share_id]` page with dynamic OG tags. This is the viral loop: user runs audit → shares results on Twitter → followers click and run their own audit. The OG image should show the savings number prominently.
+Next priorities:
 
-2. **Team benchmarking** — "Your 15-person team spends $2,400/mo on AI tools. That's 40% above the median for teams your size." Benchmarks require aggregated data from completed audits, which means the database needs at least 100+ audits to be meaningful. This transforms BurnLens from "find savings" to "understand where you stand."
+1. **Dynamic OG image** — Text metadata exists today; a generated image (e.g. `@vercel/og`) with the headline savings number would improve click-through on social.
 
-3. **Resend email integration** — Send a polished HTML email with the full audit breakdown when users submit the lead capture form. Use React Email templates for the layout. Include a deep link back to their audit results. This keeps Credex in the user's inbox and provides a follow-up touchpoint.
+2. **API rate limiting** — Honeypot is in place; IP- or key-based limits (e.g. Upstash) would harden `/api/audit/summary` and `/api/leads` against abuse.
+
+3. **Team benchmarking** — Compare a team’s spend to anonymized aggregates once enough audits exist in `audit_results`, without exposing PII on public pages.
 
 ## 4. How I used AI tools
 
