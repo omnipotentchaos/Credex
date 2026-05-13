@@ -39,6 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <meta name="theme-color" content="#112F34" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
@@ -46,7 +47,12 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <a href="#main-content" className="skip-link">Skip to main content</a>
+        <div id="main-content">
+          {children}
+        </div>
+      </body>
     </html>
   );
 }

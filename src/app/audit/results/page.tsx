@@ -196,6 +196,7 @@ export default function AuditResultsPage() {
     return null;
   });
   const [copied, setCopied] = useState(false);
+  const [shareId, setShareId] = useState<string | null>(null);
 
   // AI Summary state
   const [summary, setSummary] = useState<string | null>(null);
@@ -211,7 +212,7 @@ export default function AuditResultsPage() {
 
   const fetchedRef = useRef(false);
 
-  // Redirect if no result; fetch summary on mount
+  // Redirect if no result; fetch summary + save audit on mount
   useEffect(() => {
     if (!result) {
       router.replace("/audit");
@@ -220,6 +221,7 @@ export default function AuditResultsPage() {
     if (fetchedRef.current) return;
     fetchedRef.current = true;
 
+    // Fetch AI summary
     (async () => {
       setSummaryLoading(true);
       try {
@@ -231,6 +233,19 @@ export default function AuditResultsPage() {
         const data = await res.json();
         setSummary(data.summary || null);
         setSummarySource(data.source || "template");
+
+        // Save audit to Supabase
+        const inputStored = sessionStorage.getItem("burnlens-audit-input");
+        const input = inputStored ? JSON.parse(inputStored) : {};
+        const saveRes = await fetch("/api/audit/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ input, result, aiSummary: data.summary || null }),
+        });
+        const saveData = await saveRes.json();
+        if (saveData.shareId) {
+          setShareId(saveData.shareId);
+        }
       } catch {
         setSummary(null);
       } finally {
@@ -252,6 +267,7 @@ export default function AuditResultsPage() {
           company: leadCompany || undefined,
           auditSavings: result?.totalMonthlySavings,
           savingsTier: result?.savingsTier,
+          shareId: shareId || undefined,
           honeypot: leadHoneypot,
         }),
       });
@@ -264,7 +280,10 @@ export default function AuditResultsPage() {
   };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
+    const url = shareId
+      ? `${window.location.origin}/audit/share/${shareId}`
+      : window.location.href;
+    navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

@@ -144,3 +144,38 @@
 - Add number count-up animations to results page
 - Polish mobile responsive design
 - Set up Vercel deployment
+
+---
+
+## Day 4 — 2026-05-13
+
+**Hours worked:** 4
+
+**What I did:**
+- Created `supabase-schema.sql` — full schema for `audit_results` and `leads` tables with RLS policies, indexes, and anonymous read/write for shareable URLs
+- Created `src/lib/supabase.ts` — singleton Supabase client with graceful null return when env vars not configured
+- Created `POST /api/audit/save` — saves audit to Supabase + returns 10-char nanoid `share_id`; falls back gracefully when Supabase not configured
+- Created `GET /api/audit/[shareId]` — fetches public audit by share_id for the share page
+- Created `/audit/share/[shareId]` page — server-rendered with dynamic OG + Twitter Card meta tags (title includes savings amount, description includes tool count)
+- Created `SharedAuditClient.tsx` — read-only audit view with share button, tool cards, AI summary, and "Run Your Own Audit" CTA
+- Updated results page — on mount: saves audit to Supabase, gets `share_id`, copy link uses `share_id` URL, `share_id` passed to lead capture for email deep-link
+- Updated leads API — added full Resend email integration with branded HTML template (teal card, green savings number, deep-link back to shared audit)
+- Updated leads API — wired up Supabase client for lead persistence
+- Added accessibility: skip-to-content link, `theme-color` meta, `focus-visible` outlines, `prefers-reduced-motion` support
+- All routes now: `/` `/audit` `/audit/results` `/audit/share/[shareId]` + 4 API routes
+
+**What I learned:**
+- Next.js 16 App Router `params` is now a `Promise<{...}>` — must `await params` in server components and API routes
+- nanoid was already in the dependency tree (pulled in by another package) — no install needed
+- RLS policies for anonymous access in Supabase require both `FOR SELECT` and `FOR INSERT` policies explicitly
+
+**Blockers / what I'm stuck on:**
+- Supabase tables not yet created in live project — need to run `supabase-schema.sql` in the dashboard
+- Vercel not yet deployed
+
+**Plan for tomorrow:**
+- Run `supabase-schema.sql` in Supabase dashboard (user action)
+- Deploy to Vercel + set env vars
+- Add number count-up animations to results page hero stats
+- Take screenshots for README
+- Write DEVLOG Day 5
