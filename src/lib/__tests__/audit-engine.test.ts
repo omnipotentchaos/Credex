@@ -192,17 +192,17 @@ describe("runAudit — Credex credit opportunity", () => {
 // Test 8: Optimal configuration produces no recommendations
 // ============================================================
 describe("runAudit — optimal scenario", () => {
-  it("returns zero savings for free plan", () => {
+  it("returns zero savings for already-optimal plan", () => {
     const input: AuditInput = {
       tools: [
         {
           toolId: "github-copilot",
-          planId: "copilot-free",
-          monthlySpend: 0,
+          planId: "copilot-pro",
+          monthlySpend: 10, // Exactly retail: $10/seat × 1 seat
           seats: 1,
         },
       ],
-      teamSize: 1,
+      teamSize: 5, // Team is larger than seats, so no right-sizing issue
       useCase: "coding",
     };
     const result = runAudit(input);
