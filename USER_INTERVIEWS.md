@@ -1,6 +1,6 @@
 # User Interviews — CredexAudit
 
-Three real conversations (about 10–15 minutes each) discussing the product, the assignment, and the underlying business model.
+Three real conversations (about 10–15 minutes each).
 
 ---
 
@@ -11,18 +11,14 @@ Three real conversations (about 10–15 minutes each) discussing the product, th
 **Company stage / team size:** Classmate / Solo  
 
 ### Key quotes
-
-- "What exactly is this company doing? The concept of trading AI credits is super interesting."
-- "How are they actually transferring the credits under the hood? Like, how does the marketplace actually work?"
-- "This assignment is incredibly real-world oriented. It's cool that they want a real-world developer who actually understands product, not just someone who writes code."
+- “What exactly is this company doing? The concept of trading AI credits is super interesting.”
+- “How are they actually transferring the credits under the hood? Like, how does the marketplace actually work?”
 
 ### Most surprising thing they said
-
-He was actually far more interested in Credex's underlying business model and how the credit transfers practically work than he was in his own audit savings number.
+Krishna is a full stack and AI developer, and honestly, what grabbed him was the business model. You could tell he wanted to dig into the mechanics. He barely glanced at his own audit savings — he was completely focused on how Credex is making all of this actually happen.
 
 ### What it changed about my design
-
-Because of his deep curiosity about *how* Credex actually fulfills the promise, I realized the initial "Start buying credits" CTA was too abrupt. I added more explanatory copy to the CTA banner to clearly define that it works through "verified credit transfers — often 10–30% below retail" so users aren't confused about what they are clicking.
+Turns out, my original call-to-action (CTA) was a little too abrupt. Krishna’s curiosity showed me people need a bit more context up front. So, I rewrote the CTA banner to explain that transactions go through “verified credit transfers — often 10–30% below retail.” Now, users know what they’re clicking into right away.
 
 ---
 
@@ -33,18 +29,14 @@ Because of his deep curiosity about *how* Credex actually fulfills the promise, 
 **Company stage / team size:** Classmate / Solo  
 
 ### Key quotes
-
-- "I am genuinely surprised by the level of detail required for this assignment. The economics and GTM docs are intense."
-- "I've *hamesha* (always) wanted to work on a project structured exactly like this, where you actually have to think about the business."
-- "The PDF export and the shareable link are really good touches for a take-home."
+- “I am genuinely surprised by the level of detail required for this assignment. The economics and GTM docs are intense.”
+- “I’ve *hamesha* (always) wanted to work on a project structured exactly like this, where you actually have to think about the business.”
 
 ### Most surprising thing they said
-
-He spent more time looking at the architectural decisions and the `ECONOMICS.md` file than playing with the actual UI of the web app.
+Piyush came at things from a different angle. The PDF export and shareable link features? He loved those. But here’s the real surprise — he spent way more time diving into the docs and architectural decisions than actually playing with the UI. The `ECONOMICS.md` file drew him in hard.
 
 ### What it changed about my design
-
-His reaction made me realize that the documentation is arguably more important than the code itself for this specific assignment. Because of his feedback, I went back and completely restructured the `README.md` to make the engineering trade-offs and the links to the `.md` files the very first thing a reviewer sees.
+His feedback made me rethink my priorities. For this type of assignment, solid documentation means more than just flashy UI. I went back and reworked `README.md` so reviewers hit the engineering trade-offs and all the other .md files right away, front and center.
 
 ---
 
@@ -52,18 +44,14 @@ His reaction made me realize that the documentation is arguably more important t
 
 **Participant:** Akanksha  
 **Role:** Software Engineer  
-**Company stage / team size:** Expedia Group / Enterprise (3.5 YOE)  
+**Company stage / team size:** Expedia Group (3.5 yrs experience)  
 
 ### Key quotes
-
-- "At a company like Expedia, we actually have a huge problem tracking SaaS spend across different pods and teams."
-- "The 'Seat right-sizing' and 'Overpaying' checks are really smart because teams constantly leave unused seats on enterprise plans when people leave."
-- "If I used this at work, I couldn't buy the credits myself. You need a way for me to send these results directly to my engineering manager or finance team."
+- “At a company like Expedia, we actually have a huge problem tracking SaaS spend across different pods and teams.”
+- “If I used this at work, I couldn’t buy the credits myself. You need a way for me to send these results directly to my engineering manager or finance team.”
 
 ### Most surprising thing they said
-
-She pointed out a massive B2B flow issue: at the enterprise level, the developer running the audit is almost never the person who holds the corporate credit card to actually buy the discounted credits from Credex.
+The seat right-sizing and overpaying checks caught her eye — apparently, leaving unused seats on enterprise plans is an everyday headache. But then she flagged something big: the developer running the audit isn’t the one swiping the company card.
 
 ### What it changed about my design
-
-Her feedback is the exact reason I implemented the **Shareable URL** (Supabase integration) and the **Transactional Email** (Resend integration). Initially, the app only showed local results. Because of Akanksha, I added the ability to generate a unique public link and email it, so an engineer can run the audit and instantly forward the findings to their manager for approval.
+That was a wake-up call. Because of her, I built the shareable URL feature (with Supabase) and added transactional email support (with Resend). Before, the app just showed local results. Now, you can generate a unique link or email the findings straight to a manager — so the whole approval chain stays smooth and the engineer doesn’t get stuck.
